@@ -73,9 +73,20 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
+import it.csi.mddtools.guigen.AppWindow;
+import it.csi.mddtools.guigen.ApplicationArea;
+import it.csi.mddtools.guigen.Footer;
+import it.csi.mddtools.guigen.GUIModel;
+import it.csi.mddtools.guigen.GUIStructure;
 import it.csi.mddtools.guigen.GuigenFactory;
 import it.csi.mddtools.guigen.GuigenPackage;
+import it.csi.mddtools.guigen.Header;
+import it.csi.mddtools.guigen.Statusbar;
+import it.csi.mddtools.guigen.Titlebar;
 import it.csi.mddtools.guigen.provider.GuigenEditPlugin;
+import it.csi.mddtools.guigen.presentation.GuigenEditorPlugin;
+
+
 
 
 import org.eclipse.core.runtime.Path;
@@ -142,10 +153,18 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 * This is the initial object creation page.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
+	 */
+	protected GuigenModelWizardAnaprodDataCreationPage anaprodDataCreationPage;
+
+	/**
+	 * This is the initial object creation page.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
 	 */
 	protected GuigenModelWizardInitialObjectCreationPage initialObjectCreationPage;
-
+	
 	/**
 	 * Remember the selection during initialization for populating the default container.
 	 * <!-- begin-user-doc -->
@@ -209,11 +228,34 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 * Create a new model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	protected EObject createInitialModel() {
 		EClass eClass = (EClass)guigenPackage.getEClassifier(initialObjectCreationPage.getInitialObjectName());
 		EObject rootObject = guigenFactory.create(eClass);
+		if (initialObjectCreationPage.getInitialObjectName().indexOf("GUIModel")!=-1){
+			GUIModel model = (GUIModel)rootObject;
+			// aggiunge dati identificativi
+			model.setCodProdotto(anaprodDataCreationPage.getCodProdotto());
+			model.setCodComponente(anaprodDataCreationPage.getCodComponente());
+			model.setVersioneProdotto(anaprodDataCreationPage.getVerProdotto());
+			model.setVersioneComponente(anaprodDataCreationPage.getVerComponente());
+			// aggiunge struttura minimale
+			GUIStructure structure = guigenFactory.createGUIStructure();
+			model.setStructure(structure);
+			AppWindow appwin = guigenFactory.createAppWindow();
+			structure.setAppWindow(appwin);
+			Header header = guigenFactory.createHeader();
+			Footer footer = guigenFactory.createFooter();
+			appwin.setHeader(header);
+			appwin.setFooter(footer);
+			ApplicationArea apparea = guigenFactory.createApplicationArea();
+			appwin.setAppArea(apparea);
+			Titlebar titlebar = guigenFactory.createTitlebar();
+			apparea.setTitlebar(titlebar);
+			Statusbar statusbar = guigenFactory.createStatusbar();
+			apparea.setStatusbar(statusbar);
+		}
 		return rootObject;
 	}
 
@@ -564,10 +606,306 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	}
 
 	/**
+		 * This is the page where the type of object to create is selected.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated NOT
+		 */
+		public class GuigenModelWizardAnaprodDataCreationPage extends WizardPage {
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			protected org.eclipse.swt.widgets.Text codProdotto;
+			
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			protected org.eclipse.swt.widgets.Text codComponente;
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			protected org.eclipse.swt.widgets.Text verProdotto;
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			protected org.eclipse.swt.widgets.Text verComponente;
+		
+			/**
+			 * Pass in the selection.
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			public GuigenModelWizardAnaprodDataCreationPage(String pageId) {
+				super(pageId);
+			}
+		
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			public String getCodProdotto() {
+				String txt = codProdotto.getText();
+				if (txt==null || txt.length()==0)
+					return null;
+				else
+					return txt;
+			}
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			public String getCodComponente() {
+				String txt = codComponente.getText();
+				if (txt==null || txt.length()==0)
+					return null;
+				else
+					return txt;
+			}
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			public String getVerProdotto() {
+				String txt = verProdotto.getText();
+				if (txt==null || txt.length()==0)
+					return null;
+				else
+					return txt;
+			}
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			public String getVerComponente() {
+				String txt = verComponente.getText();
+				if (txt==null || txt.length()==0)
+					return null;
+				else
+					return txt;
+			}
+			
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			public void createControl(Composite parent) {
+				Composite composite = new Composite(parent, SWT.NONE);
+				{
+					GridLayout layout = new GridLayout();
+					layout.numColumns = 1;
+					layout.verticalSpacing = 12;
+					composite.setLayout(layout);
+		
+					GridData data = new GridData();
+					data.verticalAlignment = GridData.FILL;
+					data.grabExcessVerticalSpace = true;
+					data.horizontalAlignment = GridData.FILL;
+					composite.setLayoutData(data);
+				}
+		
+				Label codProdottoLabel = new Label(composite, SWT.LEFT);
+				{
+					codProdottoLabel.setText(GuigenEditorPlugin.INSTANCE.getString("_UI_CodProdotto_label"));
+		
+					GridData data = new GridData();
+					data.horizontalAlignment = GridData.FILL;
+					codProdottoLabel.setLayoutData(data);
+				}
+		
+				codProdotto = new org.eclipse.swt.widgets.Text(composite, SWT.BORDER);
+				{
+					GridData data = new GridData();
+					data.horizontalAlignment = GridData.FILL;
+					data.grabExcessHorizontalSpace = true;
+					codProdotto.setLayoutData(data);
+					codProdotto.addModifyListener(validator);
+				}
+				
+				Label verProdottoLabel = new Label(composite, SWT.LEFT);
+				{
+					verProdottoLabel.setText(GuigenEditorPlugin.INSTANCE.getString("_UI_VerProdotto_label"));
+		
+					GridData data = new GridData();
+					data.horizontalAlignment = GridData.FILL;
+					verProdottoLabel.setLayoutData(data);
+				}
+				
+				verProdotto = new org.eclipse.swt.widgets.Text(composite, SWT.BORDER);
+				{
+					GridData data = new GridData();
+					data.horizontalAlignment = GridData.FILL;
+					data.grabExcessHorizontalSpace = true;
+					verProdotto.setLayoutData(data);
+					verProdotto.addModifyListener(validator);
+				}
+				
+				Label codComponenteLabel = new Label(composite, SWT.LEFT);
+				{
+					codComponenteLabel.setText(GuigenEditorPlugin.INSTANCE.getString("_UI_CodComponente_label"));
+		
+					GridData data = new GridData();
+					data.horizontalAlignment = GridData.FILL;
+					codComponenteLabel.setLayoutData(data);
+				}
+				
+				codComponente = new org.eclipse.swt.widgets.Text(composite, SWT.BORDER);
+				{
+					GridData data = new GridData();
+					data.horizontalAlignment = GridData.FILL;
+					data.grabExcessHorizontalSpace = true;
+					codComponente.setLayoutData(data);
+					codComponente.addModifyListener(validator);
+				}
+		
+				Label verComponenteLabel = new Label(composite, SWT.LEFT);
+				{
+					verComponenteLabel.setText(GuigenEditorPlugin.INSTANCE.getString("_UI_VerComponente_label"));
+		
+					GridData data = new GridData();
+					data.horizontalAlignment = GridData.FILL;
+					verComponenteLabel.setLayoutData(data);
+				}
+				
+				verComponente = new org.eclipse.swt.widgets.Text(composite, SWT.BORDER);
+				{
+					GridData data = new GridData();
+					data.horizontalAlignment = GridData.FILL;
+					data.grabExcessHorizontalSpace = true;
+					verComponente.setLayoutData(data);
+					verComponente.addModifyListener(validator);
+				}
+				
+				setPageComplete(validatePage());
+				setControl(composite);
+			}
+		
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			protected ModifyListener validator =
+				new ModifyListener() {
+					public void modifyText(ModifyEvent e) {
+						setPageComplete(validatePage());
+					}
+				};
+		
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			protected boolean validatePage() {
+				//return getInitialObjectName() != null && getEncodings().contains(encodingField.getText());
+				return getCodProdotto()!=null && getCodComponente()!=null&&
+				getVerProdotto()!=null && getVerComponente()!=null;
+			}
+		
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			@Override
+			public void setVisible(boolean visible) {
+				super.setVisible(visible);
+				if (visible) {
+	//				if (initialObjectField.getItemCount() == 1) {
+	//					initialObjectField.clearSelection();
+	//					encodingField.setFocus();
+	//				}
+	//				else {
+	//					encodingField.clearSelection();
+	//					initialObjectField.setFocus();
+	//				}
+				}
+			}
+		
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+	//		public String getInitialObjectName() {
+	//			String label = initialObjectField.getText();
+	//	
+	//			for (String name : getInitialObjectNames()) {
+	//				if (getLabel(name).equals(label)) {
+	//					return name;
+	//				}
+	//			}
+	//			return null;
+	//		}
+		
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+	//		public String getEncoding() {
+	//			return encodingField.getText();
+	//		}
+		
+			/**
+			 * Returns the label for the specified type name.
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			protected String getLabel(String typeName) {
+				try {
+					return GuigenEditPlugin.INSTANCE.getString("_UI_" + typeName + "_type");
+				}
+				catch(MissingResourceException mre) {
+					GuigenEditorPlugin.INSTANCE.log(mre);
+				}
+				return typeName;
+			}
+		
+			/**
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+	//		protected Collection<String> getEncodings() {
+	//			if (encodings == null) {
+	//				encodings = new ArrayList<String>();
+	//				for (StringTokenizer stringTokenizer = new StringTokenizer(Servicegen_metamodelEditorPlugin.INSTANCE.getString("_UI_XMLEncodingChoices")); stringTokenizer.hasMoreTokens(); ) {
+	//					encodings.add(stringTokenizer.nextToken());
+	//				}
+	//			}
+	//			return encodings;
+	//		}
+		}
+
+	/**
 	 * The framework calls this to create the contents of the wizard.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 		@Override
 	public void addPages() {
@@ -616,6 +954,11 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		initialObjectCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenModelWizard_label"));
 		initialObjectCreationPage.setDescription(GuigenEditorPlugin.INSTANCE.getString("_UI_Wizard_initial_object_description"));
 		addPage(initialObjectCreationPage);
+		
+		anaprodDataCreationPage = new GuigenModelWizardAnaprodDataCreationPage("anaprodData");
+		anaprodDataCreationPage.setTitle("Dati identificazione del componente");
+		anaprodDataCreationPage.setDescription("Inserire i dati di identificazione del componente risultante come da specifiche ANAPROD");
+		addPage(anaprodDataCreationPage);
 	}
 
 	/**
