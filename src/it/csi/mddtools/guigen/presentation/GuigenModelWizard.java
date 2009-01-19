@@ -83,8 +83,10 @@ import it.csi.mddtools.guigen.GuigenPackage;
 import it.csi.mddtools.guigen.Header;
 import it.csi.mddtools.guigen.Statusbar;
 import it.csi.mddtools.guigen.Titlebar;
+import it.csi.mddtools.guigen.Typedefs;
 import it.csi.mddtools.guigen.provider.GuigenEditPlugin;
 import it.csi.mddtools.guigen.presentation.GuigenEditorPlugin;
+
 
 
 
@@ -254,7 +256,14 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			Titlebar titlebar = guigenFactory.createTitlebar();
 			apparea.setTitlebar(titlebar);
 			Statusbar statusbar = guigenFactory.createStatusbar();
-			apparea.setStatusbar(statusbar);
+			apparea.setStatusbar(statusbar); 
+			// crea tipi base
+			it.csi.mddtools.guigen.Type [] baseCSITypes = it.csi.mddtools.guigen.genutils.GenUtils.generateCSIBaseTypes();
+			Typedefs baseTypesContainer = guigenFactory.createTypedefs();
+			model.setTypedefs(baseTypesContainer);
+			for (int i = 0; i < baseCSITypes.length; i++) {
+				baseTypesContainer.getTypes().add(baseCSITypes[i]);
+			}
 		}
 		return rootObject;
 	}
