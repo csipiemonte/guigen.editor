@@ -75,6 +75,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 
 import it.csi.mddtools.guigen.AppWindow;
 import it.csi.mddtools.guigen.ApplicationArea;
+import it.csi.mddtools.guigen.ApplicationDataDefs;
 import it.csi.mddtools.guigen.Footer;
 import it.csi.mddtools.guigen.GUIModel;
 import it.csi.mddtools.guigen.GUIStructure;
@@ -264,6 +265,9 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			for (int i = 0; i < baseCSITypes.length; i++) {
 				baseTypesContainer.getTypes().add(baseCSITypes[i]);
 			}
+			// inserisce il contenitore di appdata
+			ApplicationDataDefs appDataDefs = guigenFactory.createApplicationDataDefs();
+			model.setAppDataDefs(appDataDefs);
 		}
 		return rootObject;
 	}
