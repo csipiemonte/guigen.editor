@@ -75,15 +75,22 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 
 import it.csi.mddtools.guigen.AppWindow;
 import it.csi.mddtools.guigen.ApplicationArea;
+import it.csi.mddtools.guigen.ApplicationData;
 import it.csi.mddtools.guigen.ApplicationDataDefs;
+import it.csi.mddtools.guigen.ComplexType;
+import it.csi.mddtools.guigen.DataLifetimeType;
+import it.csi.mddtools.guigen.Field;
 import it.csi.mddtools.guigen.Footer;
 import it.csi.mddtools.guigen.GUIModel;
 import it.csi.mddtools.guigen.GUIStructure;
 import it.csi.mddtools.guigen.GuigenFactory;
 import it.csi.mddtools.guigen.GuigenPackage;
 import it.csi.mddtools.guigen.Header;
+import it.csi.mddtools.guigen.SimpleType;
+import it.csi.mddtools.guigen.SimpleTypeCodes;
 import it.csi.mddtools.guigen.Statusbar;
 import it.csi.mddtools.guigen.Titlebar;
+import it.csi.mddtools.guigen.Type;
 import it.csi.mddtools.guigen.Typedefs;
 import it.csi.mddtools.guigen.provider.GuigenEditPlugin;
 import it.csi.mddtools.guigen.presentation.GuigenEditorPlugin;
@@ -268,6 +275,48 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			// inserisce il contenitore di appdata
 			ApplicationDataDefs appDataDefs = guigenFactory.createApplicationDataDefs();
 			model.setAppDataDefs(appDataDefs);
+			// inserisce le strutture dati per le info del current user
+			ComplexType userInfoType = guigenFactory.createComplexType();
+			userInfoType.setName("UserInfo");
+			SimpleType stringType = null;
+			for(int i =0; i< baseCSITypes.length ; i++){
+				Type currT = baseCSITypes[i];
+				if (currT instanceof SimpleType){
+					if (((SimpleType)currT).getCode()==SimpleTypeCodes.STRING)
+						stringType = (SimpleType)currT;
+				}
+			}
+			Field userInfoNome = guigenFactory.createField();
+			userInfoNome.setName("nome");
+			userInfoNome.setType(stringType);
+			userInfoType.getFields().add(userInfoNome);
+			Field userInfoCognome = guigenFactory.createField();
+			userInfoCognome.setName("cognome");
+			userInfoCognome.setType(stringType);
+			userInfoType.getFields().add(userInfoCognome);
+			Field userInfoCodFisc = guigenFactory.createField();
+			userInfoCodFisc.setName("codFisc");
+			userInfoCodFisc.setType(stringType);
+			userInfoType.getFields().add(userInfoCodFisc);
+			Field userInfoEnte = guigenFactory.createField();
+			userInfoEnte.setName("ente");
+			userInfoEnte.setType(stringType);
+			userInfoType.getFields().add(userInfoEnte);
+			Field userInfoRuolo = guigenFactory.createField();
+			userInfoRuolo.setName("ruolo");
+			userInfoRuolo.setType(stringType);
+			userInfoType.getFields().add(userInfoRuolo);
+			Field userInfoIDIride = guigenFactory.createField();
+			userInfoIDIride.setName("idIride");
+			userInfoIDIride.setType(stringType);
+			userInfoType.getFields().add(userInfoIDIride);
+			baseTypesContainer.getTypes().add(userInfoType);
+			// inserisce l'application data del current user
+			ApplicationData currentUserAD = guigenFactory.createApplicationData();
+			currentUserAD.setName("currentUser");
+			currentUserAD.setLifetimeExtent(DataLifetimeType.USER_SESSION);
+			currentUserAD.setType(userInfoType);
+			appDataDefs.getAppData().add(currentUserAD);
 		}
 		return rootObject;
 	}
