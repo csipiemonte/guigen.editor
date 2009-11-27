@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ASCII"?>
+<guigen:TypeNamespace xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:guigen="http://www.csi.it/mddtools" xsi:schemaLocation="http://www.csi.it/mddtools ../../metamodel/guigen.ecore" name="common">
+  <types xsi:type="guigen:ComplexType" name="UserInfo">
+    <fields name="nome" type="//@types.8"/>
+    <fields name="cognome" type="//@types.8"/>
+    <fields name="codFisc" type="//@types.8"/>
+    <fields name="ente" type="//@types.8"/>
+    <fields name="ruolo" type="//@types.8"/>
+    <fields name="idIride" type="//@types.8"/>
+  </types>
+  <types xsi:type="guigen:SimpleType" name="Integer"/>
+  <types xsi:type="guigen:SimpleType" name="Boolean" code="BOOLEAN"/>
+  <types xsi:type="guigen:SimpleType" name="Byte" code="BYTE"/>
+  <types xsi:type="guigen:SimpleType" name="Date" code="DATE"/>
+  <types xsi:type="guigen:SimpleType" name="Double" code="DOUBLE"/>
+  <types xsi:type="guigen:SimpleType" name="Float" code="FLOAT"/>
+  <types xsi:type="guigen:SimpleType" name="Long" code="LONG"/>
+  <types xsi:type="guigen:SimpleType" name="String" code="STRING"/>
+  <types xsi:type="guigen:SimpleType" name="WrappedInteger" nillable="true"/>
+  <types xsi:type="guigen:SimpleType" name="WrappedBoolean" code="BOOLEAN" nillable="true"/>
+  <types xsi:type="guigen:SimpleType" name="WrappedDouble" code="DOUBLE" nillable="true"/>
+  <types xsi:type="guigen:SimpleType" name="WrappedFloat" code="FLOAT" nillable="true"/>
+  <types xsi:type="guigen:SimpleType" name="WrappedLong" code="LONG" nillable="true"/>
+  <types xsi:type="guigen:TypedArray" name="Array of Integer" componentType="//@types.1"/>
+  <types xsi:type="guigen:TypedArray" name="Array of Boolean" componentType="//@types.2"/>
+  <types xsi:type="guigen:TypedArray" name="Array of Byte" componentType="//@types.3"/>
+  <types xsi:type="guigen:TypedArray" name="Array of Date" componentType="//@types.4"/>
+  <types xsi:type="guigen:TypedArray" name="Array of Double" componentType="//@types.5"/>
+  <types xsi:type="guigen:TypedArray" name="Array of Float" componentType="//@types.6"/>
+  <types xsi:type="guigen:TypedArray" name="Array of Long" componentType="//@types.7"/>
+  <types xsi:type="guigen:TypedArray" name="Array of String" componentType="//@types.8"/>
+  <types xsi:type="guigen:TypedArray" name="Array of WrappedInteger" componentType="//@types.9"/>
+  <types xsi:type="guigen:TypedArray" name="Array of WrappedBoolean" componentType="//@types.10"/>
+  <types xsi:type="guigen:TypedArray" name="Array of WrappedDouble" componentType="//@types.11"/>
+  <types xsi:type="guigen:TypedArray" name="Array of WrappedFloat" componentType="//@types.12"/>
+  <types xsi:type="guigen:TypedArray" name="Array of WrappedLong" componentType="//@types.13"/>
+  <types xsi:type="guigen:SimpleType" name="TreeCat" code="TREE_NODE"/>
+</guigen:TypeNamespace>

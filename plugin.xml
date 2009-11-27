@@ -18,11 +18,34 @@
             id="it.csi.mddtools.guigen.presentation.GuigenModelWizardID"
             name="%_UI_GuigenModelWizard_label"
             class="it.csi.mddtools.guigen.presentation.GuigenModelWizard"
-            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            category="guigen.editor.newwizards"
             icon="icons/full/obj16/GuigenModelFile.gif">
          <description>%_UI_GuigenModelWizard_description</description>
          <selection class="org.eclipse.core.resources.IResource"/>
       </wizard>
+      <wizard
+            category="guigen.editor.newwizards"
+            class="it.csi.mddtools.guigen.presentation.CommonFilesNewWizard"
+            icon="icons/full/obj16/GuigenModelFile.gif"
+            id="it.csi.mddtools.guigen.presentation.CommonFilesNewWizard"
+            name="Librerie standard per modelli GUIGEN">
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+         <description>
+            Crea i files di "libreria" utilizzati dai modelli GUIGEN:
+- commonTNS.guigen: contiene la definizione del Type Namespace "common", contenente i tipi base
+- commonAppdata.guigen: contiene la definizione degli Application Data comuni (es "currentUser") nell'AppDataGroup "common".
+
+Questi file devono essere importati come risorsa nei modelli:
+- root
+- appmodule
+         </description>
+      </wizard>
+      <category
+            id="guigen.editor.newwizards"
+            name="Guigen wizards">
+      </category>
    </extension>
 
    <extension point="org.eclipse.ui.editors">
