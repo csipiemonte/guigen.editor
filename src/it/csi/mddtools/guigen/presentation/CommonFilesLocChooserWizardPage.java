@@ -212,7 +212,10 @@ public class CommonFilesLocChooserWizardPage extends WizardPage {
 	}
 
 	public String getCommonContainerName() {
-		return commonFilesContainerText.getText();
+		if (commonFilesContainerText.getText().endsWith("/"))
+			return commonFilesContainerText.getText();
+		else
+			return commonFilesContainerText.getText()+"/";
 	}
 	public Path getCommonFilesFolder(){
 		return commonFilesFolder;
