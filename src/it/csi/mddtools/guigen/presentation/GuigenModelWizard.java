@@ -223,7 +223,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 * Returns the names of the types that can be created as the root object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	protected Collection<String> getInitialObjectNames() {
 		if (initialObjectNames == null) {
@@ -231,7 +231,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			for (EClassifier eClassifier : guigenPackage.getEClassifiers()) {
 				if (eClassifier instanceof EClass) {
 					EClass eClass = (EClass)eClassifier;
-					if (!eClass.isAbstract()) {
+					if (!eClass.isAbstract()&& canCreate(eClass)) {
 						initialObjectNames.add(eClass.getName());
 					}
 				}
@@ -241,6 +241,18 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		return initialObjectNames;
 	}
 
+	protected boolean canCreate(EClass cl){
+		if (
+				cl.getName().equals("GUIModel") ||
+				cl.getName().equals("AppModule") ||
+				cl.getName().equals("TypeNamespace") ||
+				cl.getName().equals("SecurityModel") ||
+				cl.getName().equals("PanelDef") ||
+				cl.getName().equals("AppDataGroup"))
+			return true;
+		else
+			return false;
+	}
 	/**
 	 * Create a new model.
 	 * <!-- begin-user-doc -->
@@ -622,12 +634,21 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		/**
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @generated
+		 * @generated NOT
 		 */
 		protected ModifyListener validator =
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
+					// se la scelta non è GUIModel disattiva la scheda ANAPROD
+					if (getInitialObjectName()!=null && !getInitialObjectName().equals("GUIModel")){
+						anaprodDataCreationPage.setVisible(false);
+						anaprodDataCreationPage.setEnabled(false);
+					}
+					else{
+						anaprodDataCreationPage.setVisible(true);
+						anaprodDataCreationPage.setEnabled(true);
+					}
 				}
 			};
 
@@ -765,6 +786,20 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			}
 		
 			
+			public void setEnabled(boolean b) {
+				this.codComponente.setEnabled(b);
+				this.codProdotto.setEnabled(b);
+				this.verComponente.setEnabled(b);
+				this.verProdotto.setEnabled(b);
+				if (!b){
+					codComponente.setText("");
+					codProdotto.setText("");
+					verComponente.setText("");
+					verProdotto.setText("");
+				}
+			}
+
+
 			/**
 			 * <!-- begin-user-doc -->
 			 * <!-- end-user-doc -->
@@ -931,9 +966,11 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			 * @generated NOT
 			 */
 			protected boolean validatePage() {
-				//return getInitialObjectName() != null && getEncodings().contains(encodingField.getText());
-				return getCodProdotto()!=null && getCodComponente()!=null&&
-				getVerProdotto()!=null && getVerComponente()!=null;
+			if (codProdotto.isEnabled()) {
+				return (getCodProdotto() != null && getCodComponente() != null
+						&& getVerProdotto() != null && getVerComponente() != null);
+			} else
+				return true;
 			}
 		
 			/**
@@ -1069,7 +1106,9 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		
 		anaprodDataCreationPage = new GuigenModelWizardAnaprodDataCreationPage("anaprodData");
 		anaprodDataCreationPage.setTitle("Dati identificazione del componente");
-		anaprodDataCreationPage.setDescription("Inserire i dati di identificazione del componente risultante come da specifiche ANAPROD");
+		anaprodDataCreationPage.setDescription("Inserire i dati di identificazione del componente risultante come da specifiche ANAPROD.\n"+
+				"I dati sono significativi solo se si sta creando un oggetto GUIModel. Potranno comunque essere inseriti "+
+				"successivamente nelle proprietà dell'oggetto GUIModel.");
 		addPage(anaprodDataCreationPage);
 		
 		commonFilesPage = new CommonFilesLocChooserWizardPage(selection);
