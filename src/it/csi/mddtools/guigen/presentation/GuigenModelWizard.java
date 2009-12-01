@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.emf.common.CommonPlugin;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 
 import org.eclipse.emf.ecore.EClass;
@@ -73,6 +74,8 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
+import it.csi.mddtools.guigen.AppDataGroup;
+import it.csi.mddtools.guigen.AppModule;
 import it.csi.mddtools.guigen.AppWindow;
 import it.csi.mddtools.guigen.ApplicationArea;
 import it.csi.mddtools.guigen.ApplicationData;
@@ -86,11 +89,13 @@ import it.csi.mddtools.guigen.GUIStructure;
 import it.csi.mddtools.guigen.GuigenFactory;
 import it.csi.mddtools.guigen.GuigenPackage;
 import it.csi.mddtools.guigen.Header;
+import it.csi.mddtools.guigen.SecurityModel;
 import it.csi.mddtools.guigen.SimpleType;
 import it.csi.mddtools.guigen.SimpleTypeCodes;
 import it.csi.mddtools.guigen.Statusbar;
 import it.csi.mddtools.guigen.Titlebar;
 import it.csi.mddtools.guigen.Type;
+import it.csi.mddtools.guigen.TypeNamespace;
 import it.csi.mddtools.guigen.Typedefs;
 import it.csi.mddtools.guigen.provider.GuigenEditPlugin;
 import it.csi.mddtools.guigen.presentation.GuigenEditorPlugin;
@@ -167,6 +172,8 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 */
 	protected GuigenModelWizardAnaprodDataCreationPage anaprodDataCreationPage;
 
+	protected CommonFilesLocChooserWizardPage commonFilesPage;
+	
 	/**
 	 * This is the initial object creation page.
 	 * <!-- begin-user-doc -->
@@ -325,7 +332,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 * Do the work after everything is specified.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public boolean performFinish() {
@@ -352,7 +359,8 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							// Create a resource for this file.
 							//
 							Resource resource = resourceSet.createResource(fileURI);
-
+							
+							
 							// Add the initial model object to the contents.
 							//
 							EObject rootObject = createInitialModel();
@@ -364,6 +372,48 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							//
 							Map<Object, Object> options = new HashMap<Object, Object>();
 							options.put(XMLResource.OPTION_ENCODING, initialObjectCreationPage.getEncoding());
+							
+							//// APPDATA common
+							String commonAppdataPath= commonFilesPage.getCommonFilesFolder().toString()+"commonAppdata.guigen";
+							//IContainer folder = modelFile.getParent();
+							//String commonAppdataPath= folder.getFullPath().toString()+"/"+"commonAppdata.guigen";
+							
+							URI appdataFileURI = URI.createPlatformResourceURI(commonAppdataPath, true);
+							Resource commonAppdataResource = resourceSet.createResource(appdataFileURI);
+							commonAppdataResource.load(options);
+							EList emfContent = (EList)commonAppdataResource.getContents();
+							AppDataGroup commonADG = (AppDataGroup)(emfContent.get(0));
+							if (rootObject instanceof GUIModel){
+								GUIModel guimodel = (GUIModel)rootObject;
+								guimodel.getAppDataDefs().getExtGroups().add(commonADG);
+							}
+							else if (rootObject instanceof AppModule){
+								AppModule appmodule = (AppModule)rootObject;
+								/// NOP
+							}
+							////// TNS common
+							String commonTNSPath = commonFilesPage.getCommonFilesFolder().toString()+"commonTNS.guigen";
+							//String commonTNSPath= folder.getFullPath().toString()+"/"+"commonTNS.guigen";
+							
+							URI tnsFileURI = URI.createPlatformResourceURI(commonTNSPath, true);
+							Resource commonTNSResource = resourceSet.createResource(tnsFileURI);
+							commonTNSResource.load(options);
+							emfContent = (EList)commonTNSResource.getContents();
+							TypeNamespace commonTNS = (TypeNamespace)(emfContent.get(0));
+							if (rootObject instanceof GUIModel){
+								GUIModel guimodel = (GUIModel)rootObject;
+								guimodel.getTypedefs().getExtNamespaces().add(commonTNS);
+								URI secModelURI = URI.createPlatformResourceURI(modelFile.getFullPath().removeLastSegments(1).toString()+"/"+"securityModel.guigen", true);
+								Resource securityModelRes = resourceSet.createResource(secModelURI);
+								SecurityModel secmodel = GuigenFactory.eINSTANCE.createSecurityModel();
+								guimodel.setExtSecurityModel(secmodel);
+								securityModelRes.getContents().add(secmodel);
+								securityModelRes.save(options);
+							}
+							else if (rootObject instanceof AppModule){
+								AppModule appmodule = (AppModule)rootObject;
+								/// NOP
+							}
 							resource.save(options);
 						}
 						catch (Exception exception) {
@@ -1021,6 +1071,11 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		anaprodDataCreationPage.setTitle("Dati identificazione del componente");
 		anaprodDataCreationPage.setDescription("Inserire i dati di identificazione del componente risultante come da specifiche ANAPROD");
 		addPage(anaprodDataCreationPage);
+		
+		commonFilesPage = new CommonFilesLocChooserWizardPage(selection);
+		commonFilesPage.setTitle("Cartella file comuni");
+		commonFilesPage.setDescription("Selezionare la cartella contenente i file \"commonTNS.guigen\" e \"commonAppdata.guigen\"");
+		addPage(commonFilesPage);
 	}
 
 	/**
