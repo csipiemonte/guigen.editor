@@ -284,58 +284,11 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			apparea.setTitlebar(titlebar);
 			Statusbar statusbar = guigenFactory.createStatusbar();
 			apparea.setStatusbar(statusbar); 
-			// crea tipi base
-			it.csi.mddtools.guigen.Type [] baseCSITypes = it.csi.mddtools.guigen.genutils.GenUtils.generateCSIBaseTypes();
 			Typedefs baseTypesContainer = guigenFactory.createTypedefs();
 			model.setTypedefs(baseTypesContainer);
-			for (int i = 0; i < baseCSITypes.length; i++) {
-				baseTypesContainer.getTypes().add(baseCSITypes[i]);
-			}
 			// inserisce il contenitore di appdata
 			ApplicationDataDefs appDataDefs = guigenFactory.createApplicationDataDefs();
 			model.setAppDataDefs(appDataDefs);
-			// inserisce le strutture dati per le info del current user
-			ComplexType userInfoType = guigenFactory.createComplexType();
-			userInfoType.setName("UserInfo");
-			SimpleType stringType = null;
-			for(int i =0; i< baseCSITypes.length ; i++){
-				Type currT = baseCSITypes[i];
-				if (currT instanceof SimpleType){
-					if (((SimpleType)currT).getCode()==SimpleTypeCodes.STRING)
-						stringType = (SimpleType)currT;
-				}
-			}
-			Field userInfoNome = guigenFactory.createField();
-			userInfoNome.setName("nome");
-			userInfoNome.setType(stringType);
-			userInfoType.getFields().add(userInfoNome);
-			Field userInfoCognome = guigenFactory.createField();
-			userInfoCognome.setName("cognome");
-			userInfoCognome.setType(stringType);
-			userInfoType.getFields().add(userInfoCognome);
-			Field userInfoCodFisc = guigenFactory.createField();
-			userInfoCodFisc.setName("codFisc");
-			userInfoCodFisc.setType(stringType);
-			userInfoType.getFields().add(userInfoCodFisc);
-			Field userInfoEnte = guigenFactory.createField();
-			userInfoEnte.setName("ente");
-			userInfoEnte.setType(stringType);
-			userInfoType.getFields().add(userInfoEnte);
-			Field userInfoRuolo = guigenFactory.createField();
-			userInfoRuolo.setName("ruolo");
-			userInfoRuolo.setType(stringType);
-			userInfoType.getFields().add(userInfoRuolo);
-			Field userInfoIDIride = guigenFactory.createField();
-			userInfoIDIride.setName("idIride");
-			userInfoIDIride.setType(stringType);
-			userInfoType.getFields().add(userInfoIDIride);
-			baseTypesContainer.getTypes().add(userInfoType);
-			// inserisce l'application data del current user
-			ApplicationData currentUserAD = guigenFactory.createApplicationData();
-			currentUserAD.setName("currentUser");
-			currentUserAD.setLifetimeExtent(DataLifetimeType.USER_SESSION);
-			currentUserAD.setType(userInfoType);
-			appDataDefs.getAppData().add(currentUserAD);
 		}
 		return rootObject;
 	}
