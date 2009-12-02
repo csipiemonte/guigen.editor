@@ -42,9 +42,20 @@ Questi file devono essere importati come risorsa nei modelli:
 - appmodule
          </description>
       </wizard>
+      <wizard
+            category="guigen.editor.refactorwizards"
+            class="it.csi.mddtools.guigen.presentation.GUIModelNormalizerWizard.GUIModelNormalizerWizard"
+            icon="icons/full/obj16/GuigenModelFile.gif"
+            id="it.csi.mddtools.guigen.presentation.GUIModelNormalizerWizard.GUIModelNormalizerWizard"
+            name="Normalizzatore di modello GUIModel (all-in-one -&gt; composite model)">
+      </wizard>
       <category
             id="guigen.editor.newwizards"
             name="Guigen wizards">
+      </category>
+      <category
+            id="guigen.editor.refactorwizards"
+            name="Guigen refactoring wizards">
       </category>
    </extension>
 
