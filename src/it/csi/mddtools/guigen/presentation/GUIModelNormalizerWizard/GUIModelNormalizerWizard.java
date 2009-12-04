@@ -90,7 +90,7 @@ public class GUIModelNormalizerWizard extends Wizard implements INewWizard {
 		IProgressMonitor monitor)
 		throws CoreException {
 		// create a sample file
-		monitor.beginTask("Creating ", 2);
+		monitor.beginTask("Normalizzazione", monitor.UNKNOWN);
 //		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 //		IResource resource = root.findMember(new Path(containerName));
 //		if (!resource.exists() || !(resource instanceof IContainer)) {
