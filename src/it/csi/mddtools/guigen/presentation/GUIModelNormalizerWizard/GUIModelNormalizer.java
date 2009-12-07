@@ -22,6 +22,7 @@ import it.csi.mddtools.guigen.Widget;
 import it.csi.mddtools.guigen.genutils.EditUtils;
 import it.csi.mddtools.guigen.genutils.GenUtils;
 import it.csi.mddtools.guigen.genutils.GenUtilsChecks;
+import it.csi.mddtools.guigen.presentation.GuigenModelWizard;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -152,14 +153,18 @@ public class GUIModelNormalizer {
 		monitor.worked(1);
 	}
 
+	/**
+	 * cancella dall'appdatagroup di default tutti gli appdata
+	 */
 	private void dropObsoleteAppData() {
-		// TODO Auto-generated method stub
-		
+		guimodel.getAppDataDefs().getAppData().clear();
 	}
 
+	/**
+	 * cancella dal namespace di default i tipi contenuti anche in commonTNS
+	 */
 	private void dropObsoleteBaseTypes() {
-		// TODO Auto-generated method stub
-		
+		guimodel.getTypedefs().getTypes().clear();
 	}
 
 	private void moveCurrentUserRefs() {
@@ -329,6 +334,9 @@ public class GUIModelNormalizer {
 			else if (ad.getType() instanceof TypedArray && (((TypedArray)ad.getType()).getComponentType() instanceof SimpleType)){
 				ad.setType(getRemappedBaseType(ad.getType()));
 			}
+			else if (ad.getType() instanceof ComplexType && ad.getType().getName().equals("UserInfo")){
+				ad.setType(getRemappedBaseType(ad.getType()));
+			}
 		}
 	}
 
@@ -463,7 +471,7 @@ public class GUIModelNormalizer {
 		Iterator<Type> type_it = commonTNSTypes.iterator();
 		while (type_it.hasNext()) {
 			Type currType = type_it.next();
-			if (GenUtilsChecks.typeEquals(oldType, currType))
+			if (GenUtilsChecks.typeWeakEquals(oldType, currType))
 				return currType;
 		}
 		return oldType;
