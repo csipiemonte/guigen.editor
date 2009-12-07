@@ -13,6 +13,7 @@ import it.csi.mddtools.guigen.ExecCommand;
 import it.csi.mddtools.guigen.Field;
 import it.csi.mddtools.guigen.GUIModel;
 import it.csi.mddtools.guigen.MultiDataWidget;
+import it.csi.mddtools.guigen.SecurityModel;
 import it.csi.mddtools.guigen.SimpleType;
 import it.csi.mddtools.guigen.Type;
 import it.csi.mddtools.guigen.TypeNamespace;
@@ -119,9 +120,27 @@ public class GUIModelNormalizer {
 		
 	}
 
+	/**
+	 * Esternalizza il security model se già non esternalizzato
+	 * @throws CoreException
+	 */
 	private void externalizeSecurityModel()  throws CoreException{
-		// TODO Auto-generated method stub
-		
+		SecurityModel secMod = guimodel.getSecurityModel();
+		if (secMod!=null){
+			monitor.setTaskName("esternalizzazioen del security model nel file 'securityModel.guigen'");
+			guimodel.setSecurityModel(null);
+			guimodel.setExtSecurityModel(secMod);
+			Resource secModRes = createNewResource("securityModel.guigen");
+			secModRes.getContents().add(secMod);
+			monitor.worked(1);
+		}
+	}
+
+	private Resource createNewResource(String name) {
+		URI uri = guiModelRes.getURI().trimSegments(1).appendSegment(name);
+		Resource res = resourceSet.createResource(uri);
+		resourcesToSave.add(res);
+		return res;
 	}
 
 	/**
