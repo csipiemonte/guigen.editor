@@ -1,12 +1,15 @@
 package it.csi.mddtools.guigen.presentation.GUIModelNormalizerWizard;
 
 import it.csi.mddtools.guigen.ActivationParam;
+import it.csi.mddtools.guigen.AppDataBinding;
 import it.csi.mddtools.guigen.AppDataGroup;
 import it.csi.mddtools.guigen.ApplicationData;
 import it.csi.mddtools.guigen.ApplicationDataDefs;
 import it.csi.mddtools.guigen.ComplexType;
 import it.csi.mddtools.guigen.ContentPanel;
 import it.csi.mddtools.guigen.DataWidget;
+import it.csi.mddtools.guigen.EventHandler;
+import it.csi.mddtools.guigen.ExecCommand;
 import it.csi.mddtools.guigen.Field;
 import it.csi.mddtools.guigen.GUIModel;
 import it.csi.mddtools.guigen.MultiDataWidget;
@@ -24,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -34,6 +38,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
 public class GUIModelNormalizer {
@@ -158,25 +163,116 @@ public class GUIModelNormalizer {
 	}
 
 	private void moveCurrentUserRefs() {
+		monitor.setTaskName("aggiornamento dei puntamenti all'application data 'currentUser' nei pannelli");
 		moveCurrentUserRefsFromUI();
-		moveCurrentUserRefsFromUserTypes();
-		moveCurrentUserRefsFromAppData();
+		monitor.worked(1);
+		monitor.setTaskName("aggiornamento dei puntamenti all'application data 'currentUser' negli ExecCommand");
+		moveCurrentUserRefsFromExecCommands();
+		monitor.worked(1);
 	}
 
-	private void moveCurrentUserRefsFromAppData() {
-		// TODO Auto-generated method stub
+
+	/**
+	 * aggiorna i puntamenti all'appdata 'currentUser' nei postExecData degli ExecCommand
+	 */
+	private void moveCurrentUserRefsFromExecCommands() {
+		List<ContentPanel> allCP = GenUtils.getAllContentPanels(guimodel);
+		Iterator<ContentPanel> it_cp = allCP.iterator();
+		while (it_cp.hasNext()) {
+			ContentPanel cp = it_cp.next();
+			List<Widget> allW = GenUtils.findAllWidgetsInContentPanel(cp);
+			Iterator<Widget> it_w = allW.iterator();
+			while (it_w.hasNext()) {
+				Widget widget = it_w.next();
+				Iterator<EventHandler> it_evh = widget.getEventHandlers().iterator();
+				while (it_evh.hasNext()) {
+					EventHandler evh = it_evh.next();
+					List<ExecCommand> allExec = GenUtils.getAllExecActionsForEventHandler(evh);
+					Iterator<ExecCommand> it_exec = allExec.iterator();
+					while (it_exec.hasNext()) {
+						ExecCommand exec = it_exec.next();
+						replaceAppDataRef("curentUser", exec, getNewCurrentUserAppdata());
+					}
+					
+				}
+			}
+		}
+	}
+
+	private void replaceAppDataRef(String appdataName, ExecCommand exec,
+			ApplicationData newAppdata) {
+		Iterator<ApplicationData> it_appd = exec.getPostExecData().iterator();
+		while (it_appd.hasNext()) {
+			ApplicationData appd = it_appd.next();
+			if (appd.getName().equals(appdataName)){
+				exec.getPostExecData().remove(appd);
+				exec.getPostExecData().add(newAppdata);
+				break;
+			}
+		}
 		
 	}
 
-	private void moveCurrentUserRefsFromUserTypes() {
-		// TODO Auto-generated method stub
+	private ApplicationData getNewCurrentUserAppdata() {
+		Iterator<ApplicationData> it_appd = commonAppdata.getAppData().iterator();
+		while (it_appd.hasNext()) {
+			ApplicationData appd = it_appd.next();
+			if (appd.getName().equals("currentUser")){
+				return appd;
+			}
+		}
+		return null;
+	}
+	
+	private void replaceAppDataRef(String appdataName, Widget widget,
+			ApplicationData newAppdata) {
+		if (widget instanceof DataWidget){
+			AppDataBinding db = ((DataWidget)widget).getDatabinding();
+			if (db!=null && db.getAppData().getName().equals(appdataName))
+				db.setAppData(getNewCurrentUserAppdata());
+		}
+		if (widget instanceof MultiDataWidget){
+			AppDataBinding mdb = ((MultiDataWidget)widget).getMultiDataBinding();
+			if (mdb!=null && mdb.getAppData().getName().equals(appdataName))
+				mdb.setAppData(newAppdata);
+		}
 		
 	}
 
+	private void replaceAppDataRef(String appdataName, ContentPanel cp,
+			ApplicationData newAppdata) {
+		Iterator<ApplicationData> appd_it = cp.getAppData().iterator();
+		while (appd_it.hasNext()) {
+			ApplicationData appd = appd_it.next();
+			if (appd.getName().equals(appdataName)){
+				cp.getAppData().remove(appd);
+				cp.getAppData().add(newAppdata);
+				break;
+			}
+			
+		}
+		
+	}
+
+	/**
+	 * Aggiorna i puntamenti all'appdata 'currentUser' nei content panel e nei data binding.
+	 */
 	private void moveCurrentUserRefsFromUI() {
-		// TODO Auto-generated method stub
-		
+		List<ContentPanel> allCP = GenUtils.getAllContentPanels(guimodel);
+		Iterator<ContentPanel> it_cp = allCP.iterator();
+		while (it_cp.hasNext()) {
+			ContentPanel cp = it_cp.next();
+			replaceAppDataRef("currentUser", cp, getNewCurrentUserAppdata());
+			List<Widget> allW = GenUtils.findAllWidgetsInContentPanel(cp);
+			Iterator<Widget> it_w = allW.iterator();
+			while (it_w.hasNext()) {
+				Widget widget = it_w.next();
+				replaceAppDataRef("currentUser", widget, getNewCurrentUserAppdata());
+			}
+		}
 	}
+
+	
 
 	// a.3
 	private void moveBaseTypeRefs() {
