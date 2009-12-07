@@ -115,9 +115,23 @@ public class GUIModelNormalizer {
 		
 	}
 
+	/**
+	 * Per ogni TypeNamespace esternalizza la risorsa, se già non esternalizzata
+	 * @throws CoreException
+	 */
 	private void externalizeTypes()  throws CoreException{
-		// TODO Auto-generated method stub
-		
+		ArrayList<TypeNamespace> oldTNSs = new ArrayList<TypeNamespace>();
+		oldTNSs.addAll(guimodel.getTypedefs().getNamespaces());
+		Iterator<TypeNamespace> it_tns = oldTNSs.iterator();
+		while (it_tns.hasNext()) {
+			TypeNamespace tns = it_tns.next();
+			Resource tnsResource = createNewResource(""+tns.getName()+"TNS.guigen", "tns");
+			tnsResource.getContents().add(tns);
+			if (!guimodel.getTypedefs().getExtNamespaces().contains(tns)){
+				guimodel.getTypedefs().getNamespaces().remove(tns);
+				guimodel.getTypedefs().getExtNamespaces().add(tns);
+			}
+		}
 	}
 
 	/**
@@ -130,14 +144,20 @@ public class GUIModelNormalizer {
 			monitor.setTaskName("esternalizzazioen del security model nel file 'securityModel.guigen'");
 			guimodel.setSecurityModel(null);
 			guimodel.setExtSecurityModel(secMod);
-			Resource secModRes = createNewResource("securityModel.guigen");
+			Resource secModRes = createNewResource("securityModel.guigen", null);
 			secModRes.getContents().add(secMod);
 			monitor.worked(1);
 		}
 	}
 
-	private Resource createNewResource(String name) {
-		URI uri = guiModelRes.getURI().trimSegments(1).appendSegment(name);
+	private Resource createNewResource(String name, String optSubfolderName) {
+		URI uri = null;
+		if (optSubfolderName!=null && optSubfolderName.length()>0){
+			uri = guiModelRes.getURI().trimSegments(1).appendSegment(optSubfolderName).appendSegment(name);
+		}
+		else{
+			uri = guiModelRes.getURI().trimSegments(1).appendSegment(name);
+		}
 		Resource res = resourceSet.createResource(uri);
 		resourcesToSave.add(res);
 		return res;
