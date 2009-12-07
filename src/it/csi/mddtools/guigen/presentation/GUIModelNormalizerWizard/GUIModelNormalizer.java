@@ -3,6 +3,7 @@ package it.csi.mddtools.guigen.presentation.GUIModelNormalizerWizard;
 import it.csi.mddtools.guigen.ActivationParam;
 import it.csi.mddtools.guigen.AppDataBinding;
 import it.csi.mddtools.guigen.AppDataGroup;
+import it.csi.mddtools.guigen.AppModule;
 import it.csi.mddtools.guigen.ApplicationData;
 import it.csi.mddtools.guigen.ApplicationDataDefs;
 import it.csi.mddtools.guigen.ComplexType;
@@ -106,13 +107,37 @@ public class GUIModelNormalizer {
 	}
 
 	private void externalizeAppModules()  throws CoreException{
-		// TODO Auto-generated method stub
-		
+		monitor.setTaskName("esternalizzazione degli application module (nella cartella 'module')");
+		ArrayList<AppModule> oldmods = new ArrayList<AppModule>();
+		oldmods.addAll(guimodel.getStructure().getAppWindow().getAppArea().getModules());
+		Iterator<AppModule> it_mod = oldmods.iterator();
+		while (it_mod.hasNext()) {
+			AppModule mod = it_mod.next();
+			Resource modResource = createNewResource(""+mod.getName()+"Module.guigen", "module");
+			modResource.getContents().add(mod);
+			if (!guimodel.getStructure().getAppWindow().getAppArea().getExtModules().contains(mod)){
+				guimodel.getStructure().getAppWindow().getAppArea().getModules().remove(mod);
+				guimodel.getStructure().getAppWindow().getAppArea().getExtModules().add(mod);
+			}
+		}
+		monitor.worked(1);
 	}
 
 	private void externalizeAppdatas()  throws CoreException{
-		// TODO Auto-generated method stub
-		
+		monitor.setTaskName("esternalizzazione degli application data group (nella cartella 'appdata')");
+		ArrayList<AppDataGroup> oldadgs = new ArrayList<AppDataGroup>();
+		oldadgs.addAll(guimodel.getAppDataDefs().getGroups());
+		Iterator<AppDataGroup> it_adg = oldadgs.iterator();
+		while (it_adg.hasNext()) {
+			AppDataGroup adg = it_adg.next();
+			Resource adgResource = createNewResource(""+adg.getName()+"Appdata.guigen", "appdata");
+			adgResource.getContents().add(adg);
+			if (!guimodel.getAppDataDefs().getExtGroups().contains(adg)){
+				guimodel.getAppDataDefs().getGroups().remove(adg);
+				guimodel.getAppDataDefs().getExtGroups().add(adg);
+			}
+		}
+		monitor.worked(1);
 	}
 
 	/**
@@ -120,6 +145,7 @@ public class GUIModelNormalizer {
 	 * @throws CoreException
 	 */
 	private void externalizeTypes()  throws CoreException{
+		monitor.setTaskName("esternalizzazione dei type namespace (nella cartella 'tns'");
 		ArrayList<TypeNamespace> oldTNSs = new ArrayList<TypeNamespace>();
 		oldTNSs.addAll(guimodel.getTypedefs().getNamespaces());
 		Iterator<TypeNamespace> it_tns = oldTNSs.iterator();
@@ -132,6 +158,7 @@ public class GUIModelNormalizer {
 				guimodel.getTypedefs().getExtNamespaces().add(tns);
 			}
 		}
+		monitor.worked(1);
 	}
 
 	/**
@@ -141,7 +168,7 @@ public class GUIModelNormalizer {
 	private void externalizeSecurityModel()  throws CoreException{
 		SecurityModel secMod = guimodel.getSecurityModel();
 		if (secMod!=null){
-			monitor.setTaskName("esternalizzazioen del security model nel file 'securityModel.guigen'");
+			monitor.setTaskName("esternalizzazione del security model nel file 'securityModel.guigen'");
 			guimodel.setSecurityModel(null);
 			guimodel.setExtSecurityModel(secMod);
 			Resource secModRes = createNewResource("securityModel.guigen", null);
