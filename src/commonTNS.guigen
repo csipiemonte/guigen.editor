@@ -36,4 +36,6 @@
   <types xsi:type="guigen:TypedArray" name="Array of WrappedFloat" componentType="//@types.12"/>
   <types xsi:type="guigen:TypedArray" name="Array of WrappedLong" componentType="//@types.13"/>
   <types xsi:type="guigen:SimpleType" name="TreeCat" code="TREE_NODE"/>
+  <types xsi:type="guigen:SimpleType" name="DateTime" code="DATETIME"/>
+  <types xsi:type="guigen:SimpleType" name="Hours" code="HOURS"/>
 </guigen:TypeNamespace>
