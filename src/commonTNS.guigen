@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<guigen:TypeNamespace xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:guigen="http://www.csi.it/mddtools" xsi:schemaLocation="http://www.csi.it/mddtools ../../metamodel/guigen.ecore" name="common">
+<guigen:TypeNamespace xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:guigen="http://www.csi.it/mddtools" name="common">
   <types xsi:type="guigen:ComplexType" name="UserInfo">
     <fields name="nome" type="//@types.8"/>
     <fields name="cognome" type="//@types.8"/>
@@ -7,6 +7,7 @@
     <fields name="ente" type="//@types.8"/>
     <fields name="ruolo" type="//@types.8"/>
     <fields name="idIride" type="//@types.8"/>
+    <fields name="codRuolo" type="//@types.8"/>
   </types>
   <types xsi:type="guigen:SimpleType" name="Integer"/>
   <types xsi:type="guigen:SimpleType" name="Boolean" code="BOOLEAN"/>
