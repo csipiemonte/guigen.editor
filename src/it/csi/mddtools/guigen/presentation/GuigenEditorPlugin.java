@@ -105,7 +105,7 @@ public final class GuigenEditorPlugin extends EMFPlugin {
 		
 		
 		private static final String PLUGIN_NAME = "guigen";
-		private static final String PLUGIN_VERSION = "1.5.0.012";
+		private static final String PLUGIN_VERSION = "1.5.0.013";
 		
 		/**
 		 * @generated not
