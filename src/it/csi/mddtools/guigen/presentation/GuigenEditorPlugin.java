@@ -6,11 +6,20 @@
  */
 package it.csi.mddtools.guigen.presentation;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import mddtools.usagetracking.ProfilingPacketBuilder;
+import mddtools.usagetracking.TrackingSender;
+
 import org.eclipse.emf.common.EMFPlugin;
 
 import org.eclipse.emf.common.ui.EclipseUIPlugin;
 
 import org.eclipse.emf.common.util.ResourceLocator;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * This is the central singleton for the Guigen editor plugin.
@@ -74,14 +83,14 @@ public final class GuigenEditorPlugin extends EMFPlugin {
 	 * The actual implementation of the Eclipse <b>Plugin</b>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated 
 	 */
 	public static class Implementation extends EclipseUIPlugin {
 		/**
 		 * Creates an instance.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @generated
+		 * @generated not
 		 */
 		public Implementation() {
 			super();
@@ -89,7 +98,40 @@ public final class GuigenEditorPlugin extends EMFPlugin {
 			// Remember the static instance.
 			//
 			plugin = this;
+			
+			// track usage
+			manageTracking();
+		}
+		
+		
+		private static final String PLUGIN_NAME = "guigen";
+		private static final String PLUGIN_VERSION = "1.5.0.012";
+		
+		/**
+		 * @generated not
+		 */
+		public static void manageTracking(){
+			Properties packet = mddtools.usagetracking.ProfilingPacketBuilder.packStartupInfo(PLUGIN_NAME, PLUGIN_VERSION);
+			packet.list(System.out);
+			String whoName = packet.getProperty(ProfilingPacketBuilder.P_WHO_NAME);
+			if (whoName == null || whoName.length()==0){
+				//ask for registration
+				// TODO
+				System.out.println("ask for registration");
+			}
+			else{
+				TrackingSender.sendTrackingInfo(packet);
+			}
+		}
+		
+		
+		public static String getXPluginName(){
+			return PLUGIN_NAME;
+		}
+		// TODO leggere a runtime?
+		public static String getXPluginVer(){
+			return PLUGIN_VERSION;
 		}
 	}
-
+	
 }
