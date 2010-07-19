@@ -6,6 +6,8 @@
  */
 package it.csi.mddtools.guigen.presentation;
 
+import it.csi.mddtools.guigen.genutils.MiscUtils;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -104,14 +106,12 @@ public final class GuigenEditorPlugin extends EMFPlugin {
 		}
 		
 		
-		private static final String PLUGIN_NAME = "guigen";
-		private static final String PLUGIN_VERSION = "1.5.0.013";
 		
 		/**
 		 * @generated not
 		 */
 		public static void manageTracking(){
-			Properties packet = mddtools.usagetracking.ProfilingPacketBuilder.packStartupInfo(PLUGIN_NAME, PLUGIN_VERSION);
+			Properties packet = mddtools.usagetracking.ProfilingPacketBuilder.packStartupInfo(getXPluginName(), getXPluginVer());
 			packet.list(System.out);
 			String whoName = packet.getProperty(ProfilingPacketBuilder.P_WHO_NAME);
 			if (whoName == null || whoName.length()==0){
@@ -126,11 +126,11 @@ public final class GuigenEditorPlugin extends EMFPlugin {
 		
 		
 		public static String getXPluginName(){
-			return PLUGIN_NAME;
+			return MiscUtils.getPluginName();
 		}
-		// TODO leggere a runtime?
+	
 		public static String getXPluginVer(){
-			return PLUGIN_VERSION;
+			return MiscUtils.getPluginVersion();
 		}
 	}
 	
