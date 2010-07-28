@@ -85,7 +85,7 @@ public final class GuigenEditorPlugin extends EMFPlugin {
 	 * The actual implementation of the Eclipse <b>Plugin</b>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated 
+	 * @generated
 	 */
 	public static class Implementation extends EclipseUIPlugin {
 		/**
