@@ -135,6 +135,9 @@ public class CommonFilesLocChooserWizardPage extends WizardPage {
 			Object[] result = dialog.getResult();
 			if (result.length == 1) {
 				Path f = (Path) result[0];
+				String sf = f.toString();
+				if (!sf.endsWith("/"))
+					sf += "/";
 				commonFilesContainerText.setText(f.toString());
 				commonFilesFolder = f;
 			}
@@ -214,8 +217,10 @@ public class CommonFilesLocChooserWizardPage extends WizardPage {
 	public String getCommonContainerName() {
 		if (commonFilesContainerText.getText().endsWith("/"))
 			return commonFilesContainerText.getText();
-		else
-			return commonFilesContainerText.getText()+"/";
+		else {
+			commonFilesContainerText.setText(commonFilesContainerText.getText()+"/");
+			return commonFilesContainerText.getText();
+		}
 	}
 	public Path getCommonFilesFolder(){
 		return commonFilesFolder;

@@ -339,7 +339,11 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							options.put(XMLResource.OPTION_ENCODING, initialObjectCreationPage.getEncoding());
 							
 							//// APPDATA common
-							String commonAppdataPath= commonFilesPage.getCommonFilesFolder().toString()+"commonAppdata.guigen";
+							
+							String commonAppdataPath= commonFilesPage.getCommonFilesFolder().toString();
+							if (!commonAppdataPath.endsWith("/"))
+								commonAppdataPath+="/";
+							commonAppdataPath+="commonAppdata.guigen";
 							//IContainer folder = modelFile.getParent();
 							//String commonAppdataPath= folder.getFullPath().toString()+"/"+"commonAppdata.guigen";
 							
@@ -357,7 +361,10 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 								/// NOP
 							}
 							////// TNS common
-							String commonTNSPath = commonFilesPage.getCommonFilesFolder().toString()+"commonTNS.guigen";
+							String commonTNSPath = commonFilesPage.getCommonFilesFolder().toString();
+							if (!commonTNSPath.endsWith("/"))
+								commonTNSPath+="/";
+							commonTNSPath+="commonTNS.guigen";
 							//String commonTNSPath= folder.getFullPath().toString()+"/"+"commonTNS.guigen";
 							
 							URI tnsFileURI = URI.createPlatformResourceURI(commonTNSPath, true);
