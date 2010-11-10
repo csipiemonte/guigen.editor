@@ -61,12 +61,12 @@ Questi file devono essere importati come risorsa nei modelli:
 
    <extension point="org.eclipse.ui.editors">
       <editor
-            id="it.csi.mddtools.guigen.presentation.GuigenEditorID"
-            name="%_UI_GuigenEditor_label"
-            icon="icons/full/obj16/GuigenModelFile.gif"
-            extensions="guigen"
             class="it.csi.mddtools.guigen.presentation.GuigenEditor"
-            contributorClass="it.csi.mddtools.guigen.presentation.GuigenActionBarContributor">
+            contributorClass="it.csi.mddtools.guigen.presentation.GuigenActionBarContributor"
+            extensions="guigen"
+            icon="icons/full/obj16/GuigenModelFile.gif"
+            id="it.csi.mddtools.guigen.presentation.GuigenEditorID"
+            name="%_UI_GuigenEditor_label">
       </editor>
    </extension>
 
