@@ -89,7 +89,7 @@ public class CommonFilesNewWizard extends Wizard implements INewWizard {
 		IProgressMonitor monitor)
 		throws CoreException {
 		// create a sample file
-		monitor.beginTask("Creating \"commonTNS.guigen\" e \"commonAppdata.guigen\"", 2);
+		monitor.beginTask("Creating \"commonTNS.guigen\" , \"commonAppdata.guigen\" e \"greaseTNS.guigen\"", 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(containerName));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
@@ -115,6 +115,17 @@ public class CommonFilesNewWizard extends Wizard implements INewWizard {
 				fileAPPD.setContents(stream, true, true, monitor);
 			} else {
 				fileAPPD.create(stream, true, monitor);
+			}
+			stream.close();
+		} catch (IOException e) {
+		}
+		final IFile fileGreaseTNS = container.getFile(new Path("greaseTNS.guigen"));
+		try {
+			InputStream stream = openContentStreamGreaseTNS();
+			if (fileGreaseTNS.exists()) {
+				fileGreaseTNS.setContents(stream, true, true, monitor);
+			} else {
+				fileGreaseTNS.create(stream, true, monitor);
 			}
 			stream.close();
 		} catch (IOException e) {
@@ -148,6 +159,11 @@ public class CommonFilesNewWizard extends Wizard implements INewWizard {
 
 	private InputStream openContentStreamCommonTNS() {
 		InputStream is = getClass().getResourceAsStream("/commonTNS.guigen");
+		return is;
+	}
+	
+	private InputStream openContentStreamGreaseTNS() {
+		InputStream is = getClass().getResourceAsStream("/greaseTNS.guigen");
 		return is;
 	}
 	
