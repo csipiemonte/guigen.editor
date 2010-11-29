@@ -78,6 +78,9 @@
     <fields name="yclick">
       <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
     </fields>
+    <fields name="noresetEnvelope">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.2"/>
+    </fields>
   </types>
   <types xsi:type="guigen:ComplexType" name="OpenLayerMapConfig">
     <typeAnnotation language="java" fqn="it.csi.jeegia.jeegfw.dto.jeegweb.mappa.OpenLayerMapConfig"/>
