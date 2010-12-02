@@ -78,7 +78,7 @@
     <fields name="yclick">
       <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
     </fields>
-    <fields name="noresetEnvelope">
+    <fields name="useCurrentEnvelope">
       <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.2"/>
     </fields>
   </types>
