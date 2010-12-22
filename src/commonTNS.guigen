@@ -38,4 +38,7 @@
   <types xsi:type="guigen:SimpleType" name="TreeCat" code="TREE_NODE"/>
   <types xsi:type="guigen:SimpleType" name="DateTime" code="DATETIME"/>
   <types xsi:type="guigen:SimpleType" name="Hours" code="HOURS"/>
+  <types xsi:type="guigen:ComplexType" name="TreeStatus">
+    <typeAnnotation language="java" fqn="it.csi.custom.component.tree.base.TreeStatus"/>
+  </types>
 </guigen:TypeNamespace>

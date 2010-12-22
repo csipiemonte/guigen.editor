@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
-<guigen:AppDataGroup xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:guigen="http://www.csi.it/mddtools" xsi:schemaLocation="http://www.csi.it/mddtools ../../metamodel/guigen.ecore" name="common">
+<guigen:AppDataGroup xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:guigen="http://www.csi.it/mddtools" name="common">
   <appData name="currentUser" lifetimeExtent="USER_SESSION">
     <type xsi:type="guigen:ComplexType" href="commonTNS.guigen#//@types.0"/>
+  </appData>
+  <appData name="TreeStatus" lifetimeExtent="USER_SESSION">
+    <type xsi:type="guigen:ComplexType" href="commonTNS.guigen#//@types.30"/>
   </appData>
 </guigen:AppDataGroup>
