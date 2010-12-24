@@ -248,7 +248,8 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				cl.getName().equals("TypeNamespace") ||
 				cl.getName().equals("SecurityModel") ||
 				cl.getName().equals("PanelDef") ||
-				cl.getName().equals("AppDataGroup"))
+				cl.getName().equals("AppDataGroup")||
+				cl.getName().equals("PortalProfile"))
 			return true;
 		else
 			return false;
