@@ -6,4 +6,7 @@
   <appData name="TreeStatus" lifetimeExtent="USER_SESSION">
     <type xsi:type="guigen:ComplexType" href="commonTNS.guigen#//@types.30"/>
   </appData>
+  <appData name="crumbs" lifetimeExtent="USER_SESSION">
+    <type xsi:type="guigen:TypedArray" href="commonTNS.guigen#//@types.21"/>
+  </appData>
 </guigen:AppDataGroup>
