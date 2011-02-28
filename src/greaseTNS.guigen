@@ -89,4 +89,8 @@
     <typeAnnotation language="java" fqn="it.csi.jeegia.jeegfw.dto.jeegweb.servizi.ServizioWeb"/>
   </types>
   <types xsi:type="guigen:TypedArray" name="ServizioWeb[]" componentType="//@types.6"/>
+  <types xsi:type="guigen:ComplexType" name="BaseResultDatarow">
+    <typeAnnotation language="java" fqn="it.csi.jeegia.jeegfw.dto.jeegweb.query.BaseResultDatarow"/>
+  </types>
+  <types xsi:type="guigen:TypedArray" name="BaseResultSetDataRow []" componentType="//@types.8"/>
 </guigen:TypeNamespace>
