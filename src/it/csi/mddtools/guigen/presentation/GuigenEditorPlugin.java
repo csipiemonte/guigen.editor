@@ -110,17 +110,20 @@ public final class GuigenEditorPlugin extends EMFPlugin {
 		/**
 		 * @generated not
 		 */
-		public static void manageTracking(){
-			Properties packet = mddtools.usagetracking.ProfilingPacketBuilder.packStartupInfo(getXPluginName(), getXPluginVer());
-			packet.list(System.out);
-			String whoName = packet.getProperty(ProfilingPacketBuilder.P_WHO_NAME);
-			if (whoName == null || whoName.length()==0){
-				//ask for registration
-				// TODO
-				System.out.println("ask for registration");
-			}
-			else{
-				TrackingSender.sendTrackingInfo(packet);
+		public static void manageTracking() {
+			if (TrackingSender.isTrackingActive()) {
+				Properties packet = mddtools.usagetracking.ProfilingPacketBuilder
+						.packStartupInfo(getXPluginName(), getXPluginVer());
+				packet.list(System.out);
+				String whoName = packet
+						.getProperty(ProfilingPacketBuilder.P_WHO_NAME);
+				if (whoName == null || whoName.length() == 0) {
+					// ask for registration
+					// TODO
+					System.out.println("ask for registration");
+				} else {
+					TrackingSender.sendTrackingInfo(packet);
+				}
 			}
 		}
 		
