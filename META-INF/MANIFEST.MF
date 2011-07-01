@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: guigen.editor;singleton:=true
-Bundle-Version: 1.6.1.018
+Bundle-Version: 1.6.1.021
 Bundle-ClassPath: .
 Bundle-Activator: it.csi.mddtools.guigen.presentation.GuigenEditorPlugin$Implementation
 Bundle-Vendor: %providerName
@@ -17,5 +17,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide;visibility:=reexport,
  org.eclipse.ui,
  org.apache.commons.httpclient;bundle-version="3.1.0",
- mddtools;bundle-version="1.1.0"
+ mddtools;bundle-version="1.2.0"
 Bundle-ActivationPolicy: lazy
