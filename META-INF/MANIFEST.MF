@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: guigen.editor;singleton:=true
-Bundle-Version: 1.6.1.026
+Bundle-Version: 1.6.1.027
 Bundle-ClassPath: .
 Bundle-Activator: it.csi.mddtools.guigen.presentation.GuigenEditorPlugin$Implementation
 Bundle-Vendor: %providerName
