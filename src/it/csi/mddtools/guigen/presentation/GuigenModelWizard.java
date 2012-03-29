@@ -263,6 +263,8 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				cl.getName().equals("SecurityModel") ||
 				cl.getName().equals("PanelDef") ||
 				cl.getName().equals("AppDataGroup")||
+				cl.getName().equals("WAYFProfile")||
+				cl.getName().equals("SecurityProfile")||
 				cl.getName().equals("PortalProfile"))
 			return true;
 		else
@@ -615,7 +617,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
-					// se la scelta non è GUIModel disattiva la scheda ANAPROD
+					// se la scelta non ï¿½ GUIModel disattiva la scheda ANAPROD
 					if (getInitialObjectName()!=null && !getInitialObjectName().equals("GUIModel")){
 						anaprodDataCreationPage.setVisible(false);
 						anaprodDataCreationPage.setEnabled(false);
@@ -1083,7 +1085,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		anaprodDataCreationPage.setTitle("Dati identificazione del componente");
 		anaprodDataCreationPage.setDescription("Inserire i dati di identificazione del componente risultante come da specifiche ANAPROD.\n"+
 				"I dati sono significativi solo se si sta creando un oggetto GUIModel. Potranno comunque essere inseriti "+
-				"successivamente nelle proprietà dell'oggetto GUIModel.");
+				"successivamente nelle proprietï¿½ dell'oggetto GUIModel.");
 		addPage(anaprodDataCreationPage);
 		
 		commonFilesPage = new CommonFilesLocChooserWizardPage(selection);
