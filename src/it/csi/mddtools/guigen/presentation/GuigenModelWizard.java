@@ -21,6 +21,24 @@
 package it.csi.mddtools.guigen.presentation;
 
 
+import it.csi.mddtools.guigen.AppDataGroup;
+import it.csi.mddtools.guigen.AppModule;
+import it.csi.mddtools.guigen.AppWindow;
+import it.csi.mddtools.guigen.ApplicationArea;
+import it.csi.mddtools.guigen.ApplicationDataDefs;
+import it.csi.mddtools.guigen.Footer;
+import it.csi.mddtools.guigen.GUIModel;
+import it.csi.mddtools.guigen.GUIStructure;
+import it.csi.mddtools.guigen.GuigenFactory;
+import it.csi.mddtools.guigen.GuigenPackage;
+import it.csi.mddtools.guigen.Header;
+import it.csi.mddtools.guigen.SecurityModel;
+import it.csi.mddtools.guigen.Statusbar;
+import it.csi.mddtools.guigen.Titlebar;
+import it.csi.mddtools.guigen.TypeNamespace;
+import it.csi.mddtools.guigen.Typedefs;
+import it.csi.mddtools.guigen.provider.GuigenEditPlugin;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,102 +49,49 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.StringTokenizer;
 
-import org.eclipse.emf.common.CommonPlugin;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
-
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.emf.ecore.xmi.XMLResource;
-
-import org.eclipse.emf.edit.ui.provider.ExtendedImageRegistry;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.core.runtime.IProgressMonitor;
-
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.CommonPlugin;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.emf.edit.ui.provider.ExtendedImageRegistry;
 import org.eclipse.jface.dialogs.MessageDialog;
-
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-
 import org.eclipse.swt.SWT;
-
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ModifyEvent;
-
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
-import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
-
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.part.ISetSelectionTarget;
-
-import it.csi.mddtools.guigen.AppDataGroup;
-import it.csi.mddtools.guigen.AppModule;
-import it.csi.mddtools.guigen.AppWindow;
-import it.csi.mddtools.guigen.ApplicationArea;
-import it.csi.mddtools.guigen.ApplicationData;
-import it.csi.mddtools.guigen.ApplicationDataDefs;
-import it.csi.mddtools.guigen.ComplexType;
-import it.csi.mddtools.guigen.DataLifetimeType;
-import it.csi.mddtools.guigen.Field;
-import it.csi.mddtools.guigen.Footer;
-import it.csi.mddtools.guigen.GUIModel;
-import it.csi.mddtools.guigen.GUIStructure;
-import it.csi.mddtools.guigen.GuigenFactory;
-import it.csi.mddtools.guigen.GuigenPackage;
-import it.csi.mddtools.guigen.Header;
-import it.csi.mddtools.guigen.SecurityModel;
-import it.csi.mddtools.guigen.SimpleType;
-import it.csi.mddtools.guigen.SimpleTypeCodes;
-import it.csi.mddtools.guigen.Statusbar;
-import it.csi.mddtools.guigen.Titlebar;
-import it.csi.mddtools.guigen.Type;
-import it.csi.mddtools.guigen.TypeNamespace;
-import it.csi.mddtools.guigen.Typedefs;
-import it.csi.mddtools.guigen.provider.GuigenEditPlugin;
-import it.csi.mddtools.guigen.presentation.GuigenEditorPlugin;
-
-
-
-
-
-import org.eclipse.core.runtime.Path;
-
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.ISetSelectionTarget;
 
 
 /**
@@ -187,6 +152,8 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	protected GuigenModelWizardAnaprodDataCreationPage anaprodDataCreationPage;
 
 	protected CommonFilesLocChooserWizardPage commonFilesPage;
+	
+	protected GuiModelFilesLocChooserWizardPage guiModelFilesPage;
 	
 	/**
 	 * This is the initial object creation page.
@@ -369,14 +336,46 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							commonAppdataResource.load(options);
 							EList emfContent = (EList)commonAppdataResource.getContents();
 							AppDataGroup commonADG = (AppDataGroup)(emfContent.get(0));
+							
+							
+							
+							
+							
 							if (rootObject instanceof GUIModel){
 								GUIModel guimodel = (GUIModel)rootObject;
 								guimodel.getAppDataDefs().getExtGroups().add(commonADG);
 							}
-							else if (rootObject instanceof AppModule){
+							
+							else {
+								
+								String modPrincFilePath = guiModelFilesPage.getGuiModelFilePath().toString();
+								
+								URI modPrincFileURI = URI.createPlatformResourceURI(modPrincFilePath, true);
+								Resource modPrincResource = resourceSet.createResource(modPrincFileURI);
+								modPrincResource.load(options);
+								EList emfModPrincContent = (EList)modPrincResource.getContents();
+								GUIModel modPrincModule = (GUIModel)(emfModPrincContent.get(0));
+								
+								if (rootObject instanceof AppModule){
 								AppModule appmodule = (AppModule)rootObject;
-								/// NOP
+								modPrincModule.getStructure().getAppWindow().getAppArea().getExtModules().add(appmodule);
+								appmodule.setExtSecurityModel(modPrincModule.getExtSecurityModel());
+								modPrincResource.save(options);
+								}
+								
+								else if (rootObject instanceof TypeNamespace){
+									TypeNamespace typeNamespace = (TypeNamespace)rootObject;								
+									modPrincModule.getTypedefs().getExtNamespaces().add(typeNamespace);
+									modPrincResource.save(options);
+								}
+								
+								else if (rootObject instanceof AppDataGroup){
+									AppDataGroup appDataGroup = (AppDataGroup)rootObject;								
+									modPrincModule.getAppDataDefs().getExtGroups().add(appDataGroup);
+									modPrincResource.save(options);
+								}
 							}
+							
 							////// TNS common
 							String commonTNSPath = commonFilesPage.getCommonFilesFolder().toString();
 							if (!commonTNSPath.endsWith("/"))
@@ -621,10 +620,16 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 					if (getInitialObjectName()!=null && !getInitialObjectName().equals("GUIModel")){
 						anaprodDataCreationPage.setVisible(false);
 						anaprodDataCreationPage.setEnabled(false);
+						
+						guiModelFilesPage.setVisible(true);
+						guiModelFilesPage.setEnabled(true);
 					}
 					else{
 						anaprodDataCreationPage.setVisible(true);
 						anaprodDataCreationPage.setEnabled(true);
+						
+						guiModelFilesPage.setVisible(false);
+						guiModelFilesPage.setEnabled(false);
 					}
 				}
 			};
@@ -1092,6 +1097,9 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		commonFilesPage.setTitle("Cartella file comuni");
 		commonFilesPage.setDescription("Selezionare la cartella contenente i file \"commonTNS.guigen\" e \"commonAppdata.guigen\"");
 		addPage(commonFilesPage);
+		
+		guiModelFilesPage = new GuiModelFilesLocChooserWizardPage(selection);
+		addPage(guiModelFilesPage);
 	}
 
 	/**
