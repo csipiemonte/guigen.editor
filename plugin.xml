@@ -24,6 +24,15 @@
          <selection class="org.eclipse.core.resources.IResource"/>
       </wizard>
       <wizard
+            id="it.csi.mddtools.guigen.presentation.GUIGENGenerateModelWizard.GuigenModelWizardID"
+            name="%_UI_GUIGENGenerateModelWizard_label"
+            class="it.csi.mddtools.guigen.presentation.GUIGENGenerateModelWizard.GuigenModelWizard"
+            category="guigen.editor.newwizards"
+            icon="icons/full/obj16/GuigenModelFile.gif">
+         <description>%_UI_GUIGENGenerateModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+      <wizard
             category="guigen.editor.newwizards"
             class="it.csi.mddtools.guigen.presentation.CommonFilesNewWizard"
             icon="icons/full/obj16/GuigenModelFile.gif"
