@@ -142,18 +142,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 * @generated
 	 */
 	protected GuigenModelWizardNewFileCreationPage newFileCreationPage;
-
-	/**
-	 * This is the initial object creation page.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	protected GuigenModelWizardAnaprodDataCreationPage anaprodDataCreationPage;
-
-	protected CommonFilesLocChooserWizardPage commonFilesPage;
 	
-	protected GuiModelFilesLocChooserWizardPage guiModelFilesPage;
 	
 	/**
 	 * This is the initial object creation page.
@@ -162,6 +151,27 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 * @generated NOT
 	 */
 	protected GuigenModelWizardInitialObjectCreationPage initialObjectCreationPage;
+
+	/**
+	 * This is the initial object creation page.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	
+	
+	protected GuigenModelWizardAnaprodDataCreationPage anaprodDataCreationPage;
+	
+
+	/**
+	 * Wizard commonFile
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+
+	protected CommonFilesLocChooserWizardPage commonFilesPage;
+
 	
 	/**
 	 * Remember the selection during initialization for populating the default container.
@@ -223,16 +233,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	}
 
 	protected boolean canCreate(EClass cl){
-		if (
-				cl.getName().equals("GUIModel") ||
-				cl.getName().equals("AppModule") ||
-				cl.getName().equals("TypeNamespace") ||
-				cl.getName().equals("SecurityModel") ||
-				cl.getName().equals("PanelDef") ||
-				cl.getName().equals("AppDataGroup")||
-				cl.getName().equals("WAYFProfile")||
-				cl.getName().equals("SecurityProfile")||
-				cl.getName().equals("PortalProfile"))
+		if (cl.getName().equals("GUIModel"))
 			return true;
 		else
 			return false;
@@ -298,27 +299,22 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 					protected void execute(IProgressMonitor progressMonitor) {
 						try {
 							// Create a resource set
-							//
 							ResourceSet resourceSet = new ResourceSetImpl();
 
 							// Get the URI of the model file.
-							//
 							URI fileURI = URI.createPlatformResourceURI(modelFile.getFullPath().toString(), true);
 
 							// Create a resource for this file.
-							//
 							Resource resource = resourceSet.createResource(fileURI);
 							
 							
 							// Add the initial model object to the contents.
-							//
 							EObject rootObject = createInitialModel();
 							if (rootObject != null) {
 								resource.getContents().add(rootObject);
 							}
 
 							// Save the contents of the resource to the file system.
-							//
 							Map<Object, Object> options = new HashMap<Object, Object>();
 							options.put(XMLResource.OPTION_ENCODING, initialObjectCreationPage.getEncoding());
 							
@@ -328,8 +324,6 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							if (!commonAppdataPath.endsWith("/"))
 								commonAppdataPath+="/";
 							commonAppdataPath+="commonAppdata.guigen";
-							//IContainer folder = modelFile.getParent();
-							//String commonAppdataPath= folder.getFullPath().toString()+"/"+"commonAppdata.guigen";
 							
 							URI appdataFileURI = URI.createPlatformResourceURI(commonAppdataPath, true);
 							Resource commonAppdataResource = resourceSet.createResource(appdataFileURI);
@@ -337,51 +331,16 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							EList emfContent = (EList)commonAppdataResource.getContents();
 							AppDataGroup commonADG = (AppDataGroup)(emfContent.get(0));
 							
-							
-							
-							
-							
 							if (rootObject instanceof GUIModel){
 								GUIModel guimodel = (GUIModel)rootObject;
 								guimodel.getAppDataDefs().getExtGroups().add(commonADG);
 							}
-							
-							else {
-								
-								String modPrincFilePath = guiModelFilesPage.getGuiModelFilePath().toString();
-								
-								URI modPrincFileURI = URI.createPlatformResourceURI(modPrincFilePath, true);
-								Resource modPrincResource = resourceSet.createResource(modPrincFileURI);
-								modPrincResource.load(options);
-								EList emfModPrincContent = (EList)modPrincResource.getContents();
-								GUIModel modPrincModule = (GUIModel)(emfModPrincContent.get(0));
-								
-								if (rootObject instanceof AppModule){
-								AppModule appmodule = (AppModule)rootObject;
-								modPrincModule.getStructure().getAppWindow().getAppArea().getExtModules().add(appmodule);
-								appmodule.setExtSecurityModel(modPrincModule.getExtSecurityModel());
-								modPrincResource.save(options);
-								}
-								
-								else if (rootObject instanceof TypeNamespace){
-									TypeNamespace typeNamespace = (TypeNamespace)rootObject;								
-									modPrincModule.getTypedefs().getExtNamespaces().add(typeNamespace);
-									modPrincResource.save(options);
-								}
-								
-								else if (rootObject instanceof AppDataGroup){
-									AppDataGroup appDataGroup = (AppDataGroup)rootObject;								
-									modPrincModule.getAppDataDefs().getExtGroups().add(appDataGroup);
-									modPrincResource.save(options);
-								}
-							}
-							
+						
 							////// TNS common
 							String commonTNSPath = commonFilesPage.getCommonFilesFolder().toString();
 							if (!commonTNSPath.endsWith("/"))
 								commonTNSPath+="/";
 							commonTNSPath+="commonTNS.guigen";
-							//String commonTNSPath= folder.getFullPath().toString()+"/"+"commonTNS.guigen";
 							
 							URI tnsFileURI = URI.createPlatformResourceURI(commonTNSPath, true);
 							Resource commonTNSResource = resourceSet.createResource(tnsFileURI);
@@ -397,10 +356,6 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 								guimodel.setExtSecurityModel(secmodel);
 								securityModelRes.getContents().add(secmodel);
 								securityModelRes.save(options);
-							}
-							else if (rootObject instanceof AppModule){
-								AppModule appmodule = (AppModule)rootObject;
-								/// NOP
 							}
 							resource.save(options);
 						}
@@ -616,21 +571,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
-					// se la scelta non � GUIModel disattiva la scheda ANAPROD
-					if (getInitialObjectName()!=null && !getInitialObjectName().equals("GUIModel")){
-						anaprodDataCreationPage.setVisible(false);
-						anaprodDataCreationPage.setEnabled(false);
-						
-						guiModelFilesPage.setVisible(true);
-						guiModelFilesPage.setEnabled(true);
-					}
-					else{
-						anaprodDataCreationPage.setVisible(true);
-						anaprodDataCreationPage.setEnabled(true);
-						
-						guiModelFilesPage.setVisible(false);
-						guiModelFilesPage.setEnabled(false);
-					}
+				
 				}
 			};
 
@@ -939,6 +880,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
 						setPageComplete(validatePage());
+						
 					}
 				};
 		
@@ -1040,8 +982,10 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 */
 		@Override
 	public void addPages() {
+			
+		//PAGINA Nome Modello
+
 		// Create a page, set the title, and the initial model file name.
-		//
 		newFileCreationPage = new GuigenModelWizardNewFileCreationPage("Whatever", selection);
 		newFileCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenModelWizard_label"));
 		newFileCreationPage.setDescription(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenModelWizard_description"));
@@ -1049,28 +993,22 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		addPage(newFileCreationPage);
 
 		// Try and get the resource selection to determine a current directory for the file dialog.
-		//
 		if (selection != null && !selection.isEmpty()) {
 			// Get the resource...
-			//
 			Object selectedElement = selection.iterator().next();
 			if (selectedElement instanceof IResource) {
 				// Get the resource parent, if its a file.
-				//
 				IResource selectedResource = (IResource)selectedElement;
 				if (selectedResource.getType() == IResource.FILE) {
 					selectedResource = selectedResource.getParent();
 				}
 
 				// This gives us a directory...
-				//
 				if (selectedResource instanceof IFolder || selectedResource instanceof IProject) {
 					// Set this for the container.
-					//
 					newFileCreationPage.setContainerFullPath(selectedResource.getFullPath());
 
 					// Make up a unique new name here.
-					//
 					String defaultModelBaseFilename = GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenEditorFilenameDefaultBase");
 					String defaultModelFilenameExtension = FILE_EXTENSIONS.get(0);
 					String modelFilename = defaultModelBaseFilename + "." + defaultModelFilenameExtension;
@@ -1081,11 +1019,14 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				}
 			}
 		}
+		
+		//PAGINA Scelta Modello
 		initialObjectCreationPage = new GuigenModelWizardInitialObjectCreationPage("Whatever2");
 		initialObjectCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenModelWizard_label"));
 		initialObjectCreationPage.setDescription(GuigenEditorPlugin.INSTANCE.getString("_UI_Wizard_initial_object_description"));
 		addPage(initialObjectCreationPage);
 		
+		//PAGINA Definizione anagrafica prodotto
 		anaprodDataCreationPage = new GuigenModelWizardAnaprodDataCreationPage("anaprodData");
 		anaprodDataCreationPage.setTitle("Dati identificazione del componente");
 		anaprodDataCreationPage.setDescription("Inserire i dati di identificazione del componente risultante come da specifiche ANAPROD.\n"+
@@ -1093,13 +1034,12 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				"successivamente nelle propriet� dell'oggetto GUIModel.");
 		addPage(anaprodDataCreationPage);
 		
+		//PAGINA Definizione commonFile
 		commonFilesPage = new CommonFilesLocChooserWizardPage(selection);
 		commonFilesPage.setTitle("Cartella file comuni");
 		commonFilesPage.setDescription("Selezionare la cartella contenente i file \"commonTNS.guigen\" e \"commonAppdata.guigen\"");
 		addPage(commonFilesPage);
-		
-		guiModelFilesPage = new GuiModelFilesLocChooserWizardPage(selection);
-		addPage(guiModelFilesPage);
+	
 	}
 
 	/**
