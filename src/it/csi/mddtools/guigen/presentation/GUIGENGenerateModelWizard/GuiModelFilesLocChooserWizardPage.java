@@ -81,7 +81,7 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 		super("wizardPage");
 		setTitle(TITLE_WIZARD);
 		setDescription(DESCRIPTION_WIZARD);
-		this.selection = selection;s
+		this.selection = selection;
 	
 	}
 
