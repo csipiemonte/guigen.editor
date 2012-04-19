@@ -20,10 +20,20 @@
  */
 package it.csi.mddtools.guigen.presentation.GUIGENGenerateModelWizard;
 
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-
-import it.csi.mddtools.guigen.*;
+import it.csi.mddtools.guigen.AppDataGroup;
+import it.csi.mddtools.guigen.AppWindow;
+import it.csi.mddtools.guigen.ApplicationArea;
+import it.csi.mddtools.guigen.ApplicationDataDefs;
+import it.csi.mddtools.guigen.Footer;
+import it.csi.mddtools.guigen.GUIModel;
+import it.csi.mddtools.guigen.GUIStructure;
+import it.csi.mddtools.guigen.GuigenFactory;
+import it.csi.mddtools.guigen.GuigenPackage;
+import it.csi.mddtools.guigen.Header;
+import it.csi.mddtools.guigen.Statusbar;
+import it.csi.mddtools.guigen.Titlebar;
+import it.csi.mddtools.guigen.TypeNamespace;
+import it.csi.mddtools.guigen.Typedefs;
 
 public class GUIModelCreator {
 	private String codProd;

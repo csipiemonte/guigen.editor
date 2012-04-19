@@ -30,6 +30,7 @@ import it.csi.mddtools.guigen.TypeNamespace;
 import it.csi.mddtools.guigen.presentation.GuigenEditorPlugin;
 import it.csi.mddtools.guigen.provider.GuigenEditPlugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -527,10 +528,23 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
-					
+					boolean enabledWizard = getEnabledGuiModelFilesLocChooserWizardPage(getInitialObjectName());
+					guiModelFilesPage.setEnabled(enabledWizard);
 				}
 			};
 
+			
+		private boolean getEnabledGuiModelFilesLocChooserWizardPage(String value){
+			if( value != null && 
+				(value.equals("PanelDef") ||
+				value.equals("WAYFProfile")||
+				value.equals("SecurityProfile")||
+				value.equals("PortalProfile")))
+				return false;
+				
+		return true;
+				
+		}
 		/**
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -627,13 +641,14 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		@Override
 	public void addPages() {
 			
+		String modPrincFilePathTmp = "";
+			
 		//PAGINA Nome Modello
 			
 		// Create a page, set the title, and the initial model file name.
 		newFileCreationPage = new GuigenModelWizardNewFileCreationPage("Whatever", selection);
-		//TODO: MODIFICARE TITLE
-		newFileCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenModelWizard_label"));
-		newFileCreationPage.setDescription(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenModelWizard_description"));
+		newFileCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_GUIGENGenerateModelWizard_label"));
+		newFileCreationPage.setDescription(GuigenEditorPlugin.INSTANCE.getString("_UI_GUIGENGenerateModelWizard_description"));
 		newFileCreationPage.setFileName(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenEditorFilenameDefaultBase") + "." + FILE_EXTENSIONS.get(0));
 		addPage(newFileCreationPage);
 
@@ -644,8 +659,26 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			if (selectedElement instanceof IResource) {
 				// Get the resource parent, if its a file.
 				IResource selectedResource = (IResource)selectedElement;
+				modPrincFilePathTmp = selectedResource.getFullPath().toPortableString();
 				if (selectedResource.getType() == IResource.FILE) {
+					
+					
+					modPrincFilePathTmp =selectedResource.getFullPath().toPortableString();					
 					selectedResource = selectedResource.getParent();
+					URI modPrincFileURI = URI.createPlatformResourceURI(modPrincFilePathTmp, true);
+					ResourceSet resourceSet = new ResourceSetImpl();
+					Resource modPrincResource = resourceSet.createResource(modPrincFileURI);
+					Map<Object, Object> options = new HashMap<Object, Object>();
+							
+					try {
+						modPrincResource.load(options);
+						EList emfModPrincContent = (EList)modPrincResource.getContents();
+						if ( !((emfModPrincContent.get(0)) instanceof GUIModel))
+							modPrincFilePathTmp = selectedResource.getFullPath().toPortableString();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				
 				}
 
 				// This gives us a directory...
@@ -661,18 +694,21 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 						modelFilename = defaultModelBaseFilename + i + "." + defaultModelFilenameExtension;
 					}
 					newFileCreationPage.setFileName(modelFilename);
+					
 				}
 			}
 		}
 		
 		//PAGINA Scelta Tipo Modello
 		initialObjectCreationPage = new GuigenModelWizardInitialObjectCreationPage("Whatever2");
-		initialObjectCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenModelWizard_label"));
+		initialObjectCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_GUIGENGenerateModelWizard_label"));
 		initialObjectCreationPage.setDescription(GuigenEditorPlugin.INSTANCE.getString("_UI_Wizard_initial_object_description"));
 		addPage(initialObjectCreationPage);
 		
 		//PAGINA Referenziazione Modello Principale
 		guiModelFilesPage = new GuiModelFilesLocChooserWizardPage(selection);
+		guiModelFilesPage.setGuiModelFilePath(modPrincFilePathTmp);
+		
 		addPage(guiModelFilesPage);
 	}
 

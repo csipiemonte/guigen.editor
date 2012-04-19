@@ -60,6 +60,18 @@ import org.eclipse.ui.dialogs.ResourceSelectionDialog;
  */
 
 public class GuiModelFilesLocChooserWizardPage extends WizardPage {
+	
+//	private GUIModel modelloPrincipale;
+//	
+//	public GUIModel getModelloPrincipale() {
+//		return modelloPrincipale;
+//	}
+//
+//
+//	public void setModelloPrincipale(GUIModel modelloPrincipale) {
+//		this.modelloPrincipale = modelloPrincipale;
+//	}
+
 	private Text guiModelFilesContainerText;
 	
 	private Text modelNameText;
@@ -83,12 +95,19 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 		setTitle(TITLE_WIZARD);
 		setDescription(DESCRIPTION_WIZARD);
 		this.selection = selection;
+	
 	}
 
 	
 	public void setEnabled(boolean b) {
 		this.guiModelFilesContainerText.setEnabled(b);
 		this.guiModelButtonBrowse.setEnabled(b);
+		this.modelNameText.setEnabled(b);
+		if(!b){
+			setPageComplete(true);
+			setErrorMessage(null);
+		}
+		
 	}
 	/**
 	 * @see IDialogPage#createControl(Composite)
@@ -150,21 +169,23 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	 */
 
 	private void initialize() {
-		if (selection != null && selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() > 1)
-				return;
-			Object obj = ssel.getFirstElement();
-			if (obj instanceof IResource) {
-				IContainer container;
-				if (obj instanceof IContainer)
-					container = (IContainer) obj;
-				else
-					container = ((IResource) obj).getParent();
-				guiModelFilesContainerText.setText(container.getFullPath().toString());
-			}
-		}
+		
+		guiModelFilesContainerText.setText(guiModelFilePath);
+//		if (selection != null && selection.isEmpty() == false
+//				&& selection instanceof IStructuredSelection) {
+//			IStructuredSelection ssel = (IStructuredSelection) selection;
+//			if (ssel.size() > 1)
+//				return;
+//			Object obj = ssel.getFirstElement();
+//			if (obj instanceof IResource) {
+//				IContainer container;
+//				if (obj instanceof IContainer)
+//					container = (IContainer) obj;
+//				else
+//					container = ((IResource) obj).getParent();
+//				guiModelFilesContainerText.setText(container.getFullPath().toString());
+//			}
+//		}
 	}
 
 	/**
@@ -201,7 +222,7 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 			return;
 		}
 		
-		if (_guiModelRes == null ||!(_guiModelRes.getType() == IResource.FILE)){
+		if (_guiModelRes != null && !(_guiModelRes.getType() == IResource.FILE)){
 			updateStatus("Selezionare un file valido");
 			return;	
 		}
@@ -254,7 +275,7 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 				Resource modPrincResource = resourceSet.createResource(modPrincFileURI);
 				Map<Object, Object> options = new HashMap<Object, Object>();
 				
-					modPrincResource.load(options);
+				modPrincResource.load(options);
 				
 				EList emfModPrincContent = (EList)modPrincResource.getContents();
 				if ( (emfModPrincContent.get(0)) instanceof GUIModel)
@@ -268,11 +289,18 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 		return res;
 		
 	}
+    private String guiModelFilePath;
 
-	
 	public String getGuiModelFilePath() {
 		return guiModelFilesContainerText.getText();
 	}
+	public void setGuiModelFilePath(String value) {
+		this.guiModelFilePath = value;
+	}
+	
+//	public void setModelNameText(String value) {
+//		this.modelNameText.setText(value);
+//	}
 	
 	public String getModelNameText() {
 		return modelNameText.getText();
