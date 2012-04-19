@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,7 +37,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -61,17 +59,6 @@ import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	
-//	private GUIModel modelloPrincipale;
-//	
-//	public GUIModel getModelloPrincipale() {
-//		return modelloPrincipale;
-//	}
-//
-//
-//	public void setModelloPrincipale(GUIModel modelloPrincipale) {
-//		this.modelloPrincipale = modelloPrincipale;
-//	}
-
 	private Text guiModelFilesContainerText;
 	
 	private Text modelNameText;
@@ -94,7 +81,7 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 		super("wizardPage");
 		setTitle(TITLE_WIZARD);
 		setDescription(DESCRIPTION_WIZARD);
-		this.selection = selection;
+		this.selection = selection;s
 	
 	}
 
@@ -297,10 +284,6 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	public void setGuiModelFilePath(String value) {
 		this.guiModelFilePath = value;
 	}
-	
-//	public void setModelNameText(String value) {
-//		this.modelNameText.setText(value);
-//	}
 	
 	public String getModelNameText() {
 		return modelNameText.getText();
