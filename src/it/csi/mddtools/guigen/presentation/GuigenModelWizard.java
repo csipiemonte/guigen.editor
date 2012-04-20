@@ -382,6 +382,9 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 								guimodel.setTargetPlatform(guigenFactory.createTargetPlatform());								
 								guimodel.getTargetPlatform().setCode(TargetPlatformCodes.getByName(datiAggiuntiviPage.getCodeServerCombo()));
 								guimodel.getTargetPlatform().setEnableRichUIBehavior(datiAggiuntiviPage.getEnrichmentChecBox().getSelection());
+								
+								//MENUBAR								
+								guimodel.getStructure().getAppWindow().getAppArea().setMenubar(guigenFactory.createMenubar());						
 							}
 							resource.save(options);
 						}
