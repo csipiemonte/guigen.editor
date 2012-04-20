@@ -22,7 +22,6 @@ package it.csi.mddtools.guigen.presentation;
 
 
 import it.csi.mddtools.guigen.AppDataGroup;
-import it.csi.mddtools.guigen.AppModule;
 import it.csi.mddtools.guigen.AppWindow;
 import it.csi.mddtools.guigen.ApplicationArea;
 import it.csi.mddtools.guigen.ApplicationDataDefs;
@@ -34,7 +33,6 @@ import it.csi.mddtools.guigen.GuigenPackage;
 import it.csi.mddtools.guigen.Header;
 import it.csi.mddtools.guigen.SecurityModel;
 import it.csi.mddtools.guigen.Statusbar;
-import it.csi.mddtools.guigen.TargetPlatform;
 import it.csi.mddtools.guigen.TargetPlatformCodes;
 import it.csi.mddtools.guigen.Titlebar;
 import it.csi.mddtools.guigen.TypeNamespace;
