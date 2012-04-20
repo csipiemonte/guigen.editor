@@ -34,6 +34,8 @@ import it.csi.mddtools.guigen.GuigenPackage;
 import it.csi.mddtools.guigen.Header;
 import it.csi.mddtools.guigen.SecurityModel;
 import it.csi.mddtools.guigen.Statusbar;
+import it.csi.mddtools.guigen.TargetPlatform;
+import it.csi.mddtools.guigen.TargetPlatformCodes;
 import it.csi.mddtools.guigen.Titlebar;
 import it.csi.mddtools.guigen.TypeNamespace;
 import it.csi.mddtools.guigen.Typedefs;
@@ -152,13 +154,24 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 */
 	protected GuigenModelWizardInitialObjectCreationPage initialObjectCreationPage;
 
+
+	/**
+	 * Dati configurazione portale e Target Platform
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	
+	private GuiModelDatiAggiuntiviWizardPage datiAggiuntiviPage;
+	
+	
+
 	/**
 	 * This is the initial object creation page.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	
 	
 	protected GuigenModelWizardAnaprodDataCreationPage anaprodDataCreationPage;
 	
@@ -196,6 +209,8 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 	 * @generated
 	 */
 	protected List<String> initialObjectNames;
+
+
 
 	/**
 	 * This just records the information.
@@ -307,7 +322,6 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							// Create a resource for this file.
 							Resource resource = resourceSet.createResource(fileURI);
 							
-							
 							// Add the initial model object to the contents.
 							EObject rootObject = createInitialModel();
 							if (rootObject != null) {
@@ -318,44 +332,56 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							Map<Object, Object> options = new HashMap<Object, Object>();
 							options.put(XMLResource.OPTION_ENCODING, initialObjectCreationPage.getEncoding());
 							
-							//// APPDATA common
-							
-							String commonAppdataPath= commonFilesPage.getCommonFilesFolder().toString();
-							if (!commonAppdataPath.endsWith("/"))
-								commonAppdataPath+="/";
-							commonAppdataPath+="commonAppdata.guigen";
-							
-							URI appdataFileURI = URI.createPlatformResourceURI(commonAppdataPath, true);
-							Resource commonAppdataResource = resourceSet.createResource(appdataFileURI);
-							commonAppdataResource.load(options);
-							EList emfContent = (EList)commonAppdataResource.getContents();
-							AppDataGroup commonADG = (AppDataGroup)(emfContent.get(0));
-							
-							if (rootObject instanceof GUIModel){
+							if(rootObject instanceof GUIModel){
 								GUIModel guimodel = (GUIModel)rootObject;
+								
+								//// APPDATA common
+								String commonAppdataPath= commonFilesPage.getCommonFilesFolder().toString();
+								if (!commonAppdataPath.endsWith("/"))
+									commonAppdataPath+="/";
+								commonAppdataPath+="commonAppdata.guigen";
+								
+								URI appdataFileURI = URI.createPlatformResourceURI(commonAppdataPath, true);
+								Resource commonAppdataResource = resourceSet.createResource(appdataFileURI);
+								commonAppdataResource.load(options);
+								EList emfContent = (EList)commonAppdataResource.getContents();
+								AppDataGroup commonADG = (AppDataGroup)(emfContent.get(0));
+								
 								guimodel.getAppDataDefs().getExtGroups().add(commonADG);
-							}
-						
-							////// TNS common
-							String commonTNSPath = commonFilesPage.getCommonFilesFolder().toString();
-							if (!commonTNSPath.endsWith("/"))
-								commonTNSPath+="/";
-							commonTNSPath+="commonTNS.guigen";
 							
-							URI tnsFileURI = URI.createPlatformResourceURI(commonTNSPath, true);
-							Resource commonTNSResource = resourceSet.createResource(tnsFileURI);
-							commonTNSResource.load(options);
-							emfContent = (EList)commonTNSResource.getContents();
-							TypeNamespace commonTNS = (TypeNamespace)(emfContent.get(0));
-							if (rootObject instanceof GUIModel){
-								GUIModel guimodel = (GUIModel)rootObject;
+								////// TNS common
+								String commonTNSPath = commonFilesPage.getCommonFilesFolder().toString();
+								if (!commonTNSPath.endsWith("/"))
+									commonTNSPath+="/";
+								commonTNSPath+="commonTNS.guigen";
+								
+								URI tnsFileURI = URI.createPlatformResourceURI(commonTNSPath, true);
+								Resource commonTNSResource = resourceSet.createResource(tnsFileURI);
+								commonTNSResource.load(options);
+								emfContent = (EList)commonTNSResource.getContents();
+								TypeNamespace commonTNS = (TypeNamespace)(emfContent.get(0));
 								guimodel.getTypedefs().getExtNamespaces().add(commonTNS);
+								
+								//SECURITY MODEL
 								URI secModelURI = URI.createPlatformResourceURI(modelFile.getFullPath().removeLastSegments(1).toString()+"/"+"securityModel.guigen", true);
 								Resource securityModelRes = resourceSet.createResource(secModelURI);
 								SecurityModel secmodel = GuigenFactory.eINSTANCE.createSecurityModel();
 								guimodel.setExtSecurityModel(secmodel);
 								securityModelRes.getContents().add(secmodel);
 								securityModelRes.save(options);
+								
+								//HEADER DATI CONFIGURAZIONE PORTALE
+								Header header = guimodel.getStructure().getAppWindow().getHeader();
+								header.setCodApplicativo(datiAggiuntiviPage.getCodApplicativo());
+								header.setCodCanale(datiAggiuntiviPage.getCodCanale());
+								header.setLinkCanale(datiAggiuntiviPage.getLinkCanale());
+								header.setNomeApplicativo(datiAggiuntiviPage.getNomeApplicativo());
+								header.setNomeCanale(datiAggiuntiviPage.getNomeCanale());
+								
+								//TARGET PLATFORM
+								guimodel.setTargetPlatform(guigenFactory.createTargetPlatform());								
+								guimodel.getTargetPlatform().setCode(TargetPlatformCodes.getByName(datiAggiuntiviPage.getCodeServerCombo()));
+								guimodel.getTargetPlatform().setEnableRichUIBehavior(datiAggiuntiviPage.getEnrichmentChecBox().getSelection());
 							}
 							resource.save(options);
 						}
@@ -1019,7 +1045,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				}
 			}
 		}
-		
+	
 		//PAGINA Scelta Modello
 		initialObjectCreationPage = new GuigenModelWizardInitialObjectCreationPage("Whatever2");
 		initialObjectCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenModelWizard_label"));
@@ -1033,6 +1059,10 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				"I dati sono significativi solo se si sta creando un oggetto GUIModel. Potranno comunque essere inseriti "+
 				"successivamente nelle propriet� dell'oggetto GUIModel.");
 		addPage(anaprodDataCreationPage);
+		
+		//PAGINA Definizione Dati Configurazione Portale e Target Platform
+		datiAggiuntiviPage = new GuiModelDatiAggiuntiviWizardPage(selection);
+		addPage(datiAggiuntiviPage);
 		
 		//PAGINA Definizione commonFile
 		commonFilesPage = new CommonFilesLocChooserWizardPage(selection);
