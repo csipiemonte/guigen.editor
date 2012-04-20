@@ -58,8 +58,8 @@ public class GuiModelDatiAggiuntiviWizardPage extends WizardPage {
 	private Combo codeServerCombo;
 	private Button enrichmentChecBox;
 	
-	private static String TITLE_WIZARD = "Dati Configurazione Portale e Target Paltform";
-	private static String DESCRIPTION_WIZARD = "Dati Configurazione Portale e Target Paltform";
+	private static String TITLE_WIZARD = GuigenEditorPlugin.INSTANCE.getString("_UI_DatiAggiuntiviPage_title"); 
+	private static String DESCRIPTION_WIZARD = GuigenEditorPlugin.INSTANCE.getString("_UI_DatiAggiuntiviPage_descrizione"); 
 	
 	private static String COD_APPLICATIVO_LABEL = GuigenEditorPlugin.INSTANCE.getString("_UI_CodApplicativo_label");
 	private static String COD_CANALE_LABEL = GuigenEditorPlugin.INSTANCE.getString("_UI_CodCanale_label");
