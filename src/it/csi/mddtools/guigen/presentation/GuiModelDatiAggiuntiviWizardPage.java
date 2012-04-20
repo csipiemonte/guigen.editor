@@ -256,7 +256,6 @@ public class GuiModelDatiAggiuntiviWizardPage extends WizardPage {
 		}
 		
 		
-		//TODO : enumeration 		
 		for (Iterator<TargetPlatformCodes> iterator = TargetPlatformCodes.VALUES.iterator(); iterator.hasNext();) {
 			TargetPlatformCodes targetPlatformCodes = (TargetPlatformCodes) iterator.next();
 			codeServerCombo.add(targetPlatformCodes.getName());
