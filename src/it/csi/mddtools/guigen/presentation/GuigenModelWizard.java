@@ -696,6 +696,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		 */
 		public class GuigenModelWizardAnaprodDataCreationPage extends WizardPage {
 			
+			
 			/**
 			 * <!-- begin-user-doc -->
 			 * <!-- end-user-doc -->
@@ -825,7 +826,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				Label codProdottoLabel = new Label(composite, SWT.LEFT);
 				{
 					codProdottoLabel.setText(GuigenEditorPlugin.INSTANCE.getString("_UI_CodProdotto_label"));
-		
+					codProdottoLabel.setToolTipText(GuigenEditorPlugin.INSTANCE.getString("_UI_CodProdotto_tooltip"));
 					GridData data = new GridData();
 					data.horizontalAlignment = GridData.FILL;
 					codProdottoLabel.setLayoutData(data);
@@ -843,7 +844,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				Label verProdottoLabel = new Label(composite, SWT.LEFT);
 				{
 					verProdottoLabel.setText(GuigenEditorPlugin.INSTANCE.getString("_UI_VerProdotto_label"));
-		
+					verProdottoLabel.setToolTipText(GuigenEditorPlugin.INSTANCE.getString("_UI_VerProdotto_tooltip"));
 					GridData data = new GridData();
 					data.horizontalAlignment = GridData.FILL;
 					verProdottoLabel.setLayoutData(data);
@@ -861,7 +862,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				Label codComponenteLabel = new Label(composite, SWT.LEFT);
 				{
 					codComponenteLabel.setText(GuigenEditorPlugin.INSTANCE.getString("_UI_CodComponente_label"));
-		
+					codComponenteLabel.setToolTipText(GuigenEditorPlugin.INSTANCE.getString("_UI_CodComponente_tooltip"));
 					GridData data = new GridData();
 					data.horizontalAlignment = GridData.FILL;
 					codComponenteLabel.setLayoutData(data);
@@ -879,7 +880,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				Label verComponenteLabel = new Label(composite, SWT.LEFT);
 				{
 					verComponenteLabel.setText(GuigenEditorPlugin.INSTANCE.getString("_UI_VerComponente_label"));
-		
+					verComponenteLabel.setToolTipText(GuigenEditorPlugin.INSTANCE.getString("_UI_VerComponente_tooltip"));
 					GridData data = new GridData();
 					data.horizontalAlignment = GridData.FILL;
 					verComponenteLabel.setLayoutData(data);
@@ -1055,10 +1056,8 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		
 		//PAGINA Definizione anagrafica prodotto
 		anaprodDataCreationPage = new GuigenModelWizardAnaprodDataCreationPage("anaprodData");
-		anaprodDataCreationPage.setTitle("Dati identificazione del componente");
-		anaprodDataCreationPage.setDescription("Inserire i dati di identificazione del componente risultante come da specifiche ANAPROD.\n"+
-				"I dati sono significativi solo se si sta creando un oggetto GUIModel. Potranno comunque essere inseriti "+
-				"successivamente nelle propriet� dell'oggetto GUIModel.");
+		anaprodDataCreationPage.setTitle(GuigenEditorPlugin.INSTANCE.getString("_UI_WizardAnagrProd_label"));
+		anaprodDataCreationPage.setDescription(GuigenEditorPlugin.INSTANCE.getString("_UI_WizardAnagrProd_description"));
 		addPage(anaprodDataCreationPage);
 		
 		//PAGINA Definizione Dati Configurazione Portale e Target Platform
