@@ -560,7 +560,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			if (initialObjectField.getItemCount() == 1) {
 				initialObjectField.select(0);
 			}
-			initialObjectField.addModifyListener(validator);
+			initialObjectField.setEnabled(false);
 
 			Label encodingLabel = new Label(composite, SWT.LEFT);
 			{

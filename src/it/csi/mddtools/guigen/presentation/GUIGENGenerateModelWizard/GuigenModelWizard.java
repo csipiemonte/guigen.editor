@@ -74,6 +74,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -93,6 +94,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  * @generated
  */
 public class GuigenModelWizard extends Wizard implements INewWizard {
+	
 	/**
 	 * The supported extensions for created files.
 	 * <!-- begin-user-doc -->
@@ -292,7 +294,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 								
 							if (rootObject instanceof AppModule){
 								AppModule appmodule = (AppModule)rootObject;
-								appmodule.setName(guiModelFilesPage.getModelNameText());
+								appmodule.setName(initialObjectCreationPage.getModelNameText());
 								modPrincModule.getStructure().getAppWindow().getAppArea().getExtModules().add(appmodule);
 								appmodule.setExtSecurityModel(modPrincModule.getExtSecurityModel());
 								modPrincResource.save(options);
@@ -300,14 +302,14 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 								
 							else if (rootObject instanceof TypeNamespace){
 								TypeNamespace typeNamespace = (TypeNamespace)rootObject;		
-								typeNamespace.setName(guiModelFilesPage.getModelNameText());
+								typeNamespace.setName(initialObjectCreationPage.getModelNameText());
 								modPrincModule.getTypedefs().getExtNamespaces().add(typeNamespace);
 								modPrincResource.save(options);
 							}
 								
 							else if (rootObject instanceof AppDataGroup){
 								AppDataGroup appDataGroup = (AppDataGroup)rootObject;	
-								appDataGroup.setName(guiModelFilesPage.getModelNameText());
+								appDataGroup.setName(initialObjectCreationPage.getModelNameText());
 								modPrincModule.getAppDataDefs().getExtGroups().add(appDataGroup);
 								modPrincResource.save(options);
 							}
@@ -435,6 +437,14 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		 */
 		protected Combo encodingField;
 
+		
+		private Text modelNameText;
+
+		private Label labelModelName;
+		public String getModelNameText() {
+			return modelNameText!=null && modelNameText.getText()!=null ? modelNameText.getText() : "";
+		}
+
 		/**
 		 * Pass in the selection.
 		 * <!-- begin-user-doc -->
@@ -506,6 +516,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				data.horizontalAlignment = GridData.FILL;
 				data.grabExcessHorizontalSpace = true;
 				encodingField.setLayoutData(data);
+				
 			}
 
 			for (String encoding : getEncodings()) {
@@ -514,7 +525,22 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 
 			encodingField.select(0);
 			encodingField.addModifyListener(validator);
-
+			
+			labelModelName = new Label(composite, SWT.LEFT);
+			{
+				GridData data = new GridData();
+				data.horizontalAlignment = GridData.FILL;
+				labelModelName.setLayoutData(data);
+				labelModelName.setVisible(false);
+			}
+			
+			modelNameText = new Text(composite, SWT.BORDER | SWT.SINGLE); 
+			{
+				GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
+				modelNameText.setLayoutData(gd2);	
+				modelNameText.setVisible(false);
+				modelNameText.addModifyListener(validator);
+			}
 			setPageComplete(validatePage());
 			setControl(composite);
 		}
@@ -530,6 +556,13 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 					setPageComplete(validatePage());
 					boolean enabledWizard = getEnabledGuiModelFilesLocChooserWizardPage(getInitialObjectName());
 					guiModelFilesPage.setEnabled(enabledWizard);
+					labelModelName.setText("Nome "+initialObjectField.getText());
+					labelModelName.setVisible(true);
+					modelNameText.setVisible(true);
+					if(modelNameText.getText().equalsIgnoreCase("")){
+						setPageComplete(false);
+						setMessage("Inserire un nome "+initialObjectField.getText());
+					}
 				}
 			};
 
@@ -544,6 +577,13 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 				
 		return true;
 				
+		}
+		
+		private void updateStatus(String message) {
+		
+				setErrorMessage(message);
+				setPageComplete(message == null);
+			
 		}
 		/**
 		 * <!-- begin-user-doc -->

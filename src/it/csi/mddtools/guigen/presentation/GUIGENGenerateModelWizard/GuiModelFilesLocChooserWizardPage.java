@@ -61,7 +61,7 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	
 	private Text guiModelFilesContainerText;
 	
-	private Text modelNameText;
+	
 	
 	private Button guiModelButtonBrowse;
 
@@ -71,7 +71,7 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	private static String TITLE_WIZARD = "Selezione GuiModel";
 	private static String DESCRIPTION_WIZARD = "Specificare il path del modello principale";
 	private static String LABEL_WIZARD = "GuiModel";
-	private static String LABEL_MODEL_NAME = "Name Model";
+
 	/**
 	 * Constructor for SampleNewWizardPage.
 	 * 
@@ -89,7 +89,6 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	public void setEnabled(boolean b) {
 		this.guiModelFilesContainerText.setEnabled(b);
 		this.guiModelButtonBrowse.setEnabled(b);
-		this.modelNameText.setEnabled(b);
 		if(!b){
 			setPageComplete(true);
 			setErrorMessage(null);
@@ -134,17 +133,7 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 		});
 		
 		
-		Label labelModelName = new Label(container, SWT.NULL);
-		labelModelName.setText(LABEL_MODEL_NAME);
-
-		modelNameText = new Text(container, SWT.BORDER | SWT.SINGLE); 
-		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
-		modelNameText.setLayoutData(gd2);		
-		modelNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogCommonContainerChanged();
-			}
-		});
+	
 		initialize();
 		dialogCommonContainerChanged();
 		
@@ -225,12 +214,6 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 			return;
 		}
 		
-		if(getModelNameText()==null || getModelNameText().equals("")){
-			updateStatus("Definire il name del modello");
-			return;
-		}
-		
-		
 		updateStatus(null);
 	}
 	
@@ -283,10 +266,6 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	}
 	public void setGuiModelFilePath(String value) {
 		this.guiModelFilePath = value;
-	}
-	
-	public String getModelNameText() {
-		return modelNameText.getText();
 	}
 	
 }
