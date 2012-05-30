@@ -127,7 +127,6 @@ public class GuiModelDatiAggiuntiviWizardPage extends WizardPage {
 			codApplicativo.setLayoutData(data);
 			codApplicativo.addModifyListener(new ModifyListener() {
 				
-				@Override
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
 					
@@ -154,7 +153,6 @@ public class GuiModelDatiAggiuntiviWizardPage extends WizardPage {
 			codCanale.setLayoutData(data);
 			codCanale.addModifyListener(new ModifyListener() {
 				
-				@Override
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
 					
@@ -179,7 +177,6 @@ public class GuiModelDatiAggiuntiviWizardPage extends WizardPage {
 			linkCanale.setLayoutData(data);
 			linkCanale.addModifyListener(new ModifyListener() {
 				
-				@Override
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
 					
@@ -204,7 +201,6 @@ public class GuiModelDatiAggiuntiviWizardPage extends WizardPage {
 			nomeApplicativo.setLayoutData(data);
 			nomeApplicativo.addModifyListener(new ModifyListener() {
 				
-				@Override
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
 					
@@ -230,7 +226,6 @@ public class GuiModelDatiAggiuntiviWizardPage extends WizardPage {
 			nomeCanale.setLayoutData(data);
 			nomeCanale.addModifyListener(new ModifyListener() {
 				
-				@Override
 				public void modifyText(ModifyEvent e) {
 					setPageComplete(validatePage());
 					
@@ -263,7 +258,6 @@ public class GuiModelDatiAggiuntiviWizardPage extends WizardPage {
 		}
 		codeServerCombo.select(0);
 		codeServerCombo.addModifyListener(new ModifyListener() {
-			@Override
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(validatePage());
 			}
