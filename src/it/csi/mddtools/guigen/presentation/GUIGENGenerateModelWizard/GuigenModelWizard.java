@@ -64,6 +64,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -283,37 +284,38 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 							
 
 							////// Load modello principale
-								
-							String modPrincFilePath = guiModelFilesPage.getGuiModelFilePath().toString();
-								
-							URI modPrincFileURI = URI.createPlatformResourceURI(modPrincFilePath, true);
-							Resource modPrincResource = resourceSet.createResource(modPrincFileURI);
-							modPrincResource.load(options);
-							EList emfModPrincContent = (EList)modPrincResource.getContents();
-							GUIModel modPrincModule = (GUIModel)(emfModPrincContent.get(0));
-								
-							if (rootObject instanceof AppModule){
-								AppModule appmodule = (AppModule)rootObject;
-								appmodule.setName(initialObjectCreationPage.getModelNameText());
-								modPrincModule.getStructure().getAppWindow().getAppArea().getExtModules().add(appmodule);
-								appmodule.setExtSecurityModel(modPrincModule.getExtSecurityModel());
-								modPrincResource.save(options);
+
+							if(!guiModelFilesPage.isSaltaWizard()){
+								String modPrincFilePath = guiModelFilesPage.getGuiModelFilePath().toString();
+									
+								URI modPrincFileURI = URI.createPlatformResourceURI(modPrincFilePath, true);
+								Resource modPrincResource = resourceSet.createResource(modPrincFileURI);
+								modPrincResource.load(options);
+								EList emfModPrincContent = (EList)modPrincResource.getContents();
+								GUIModel modPrincModule = (GUIModel)(emfModPrincContent.get(0));
+									
+								if (rootObject instanceof AppModule){
+									AppModule appmodule = (AppModule)rootObject;
+									appmodule.setName(initialObjectCreationPage.getModelNameText());
+									modPrincModule.getStructure().getAppWindow().getAppArea().getExtModules().add(appmodule);
+									appmodule.setExtSecurityModel(modPrincModule.getExtSecurityModel());
+									modPrincResource.save(options);
+								}
+									
+								else if (rootObject instanceof TypeNamespace){
+									TypeNamespace typeNamespace = (TypeNamespace)rootObject;		
+									typeNamespace.setName(initialObjectCreationPage.getModelNameText());
+									modPrincModule.getTypedefs().getExtNamespaces().add(typeNamespace);
+									modPrincResource.save(options);
+								}
+									
+								else if (rootObject instanceof AppDataGroup){
+									AppDataGroup appDataGroup = (AppDataGroup)rootObject;	
+									appDataGroup.setName(initialObjectCreationPage.getModelNameText());
+									modPrincModule.getAppDataDefs().getExtGroups().add(appDataGroup);
+									modPrincResource.save(options);
+								}
 							}
-								
-							else if (rootObject instanceof TypeNamespace){
-								TypeNamespace typeNamespace = (TypeNamespace)rootObject;		
-								typeNamespace.setName(initialObjectCreationPage.getModelNameText());
-								modPrincModule.getTypedefs().getExtNamespaces().add(typeNamespace);
-								modPrincResource.save(options);
-							}
-								
-							else if (rootObject instanceof AppDataGroup){
-								AppDataGroup appDataGroup = (AppDataGroup)rootObject;	
-								appDataGroup.setName(initialObjectCreationPage.getModelNameText());
-								modPrincModule.getAppDataDefs().getExtGroups().add(appDataGroup);
-								modPrincResource.save(options);
-							}
-							
 							resource.save(options);
 						}
 						catch (Exception exception) {
@@ -407,6 +409,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 			return ResourcesPlugin.getWorkspace().getRoot().getFile(getContainerFullPath().append(getFileName()));
 		}
 	}
+
 
 	/**
 	 * This is the page where the type of object to create is selected.
@@ -565,7 +568,31 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 					}
 				}
 			};
-
+			
+			/**
+			 * Salta pagina associazione modello principale
+			 * <!-- begin-user-doc -->
+			 * <!-- end-user-doc -->
+			 * @generated NOT
+			 */
+			@Override
+			public IWizardPage getNextPage() {
+				IWizardPage wiz = super.getNextPage();
+			
+				if(wiz instanceof GuiModelFilesLocChooserWizardPage){
+					
+					boolean flgSaltaWizard = getEnabledGuiModelFilesLocChooserWizardPage(getInitialObjectName());
+					
+					if(!flgSaltaWizard){
+						((GuiModelFilesLocChooserWizardPage)wiz).setSaltaWizard(true);
+						((GuiModelFilesLocChooserWizardPage)wiz).setPageComplete(true);						
+						wiz = ((GuiModelFilesLocChooserWizardPage)wiz).getNextPage();			
+					}
+				}
+				
+				return wiz;
+					
+			}			
 			
 		private boolean getEnabledGuiModelFilesLocChooserWizardPage(String value){
 			if( value != null && 
@@ -750,6 +777,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 		guiModelFilesPage.setGuiModelFilePath(modPrincFilePathTmp);
 		
 		addPage(guiModelFilesPage);
+		
 	}
 
 	/**

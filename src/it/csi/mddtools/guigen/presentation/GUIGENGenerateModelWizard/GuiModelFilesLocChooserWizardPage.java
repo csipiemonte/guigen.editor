@@ -59,6 +59,9 @@ import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	
+	private boolean saltaWizard = false;
+	
+	
 	private Text guiModelFilesContainerText;
 	
 	
@@ -267,5 +270,11 @@ public class GuiModelFilesLocChooserWizardPage extends WizardPage {
 	public void setGuiModelFilePath(String value) {
 		this.guiModelFilePath = value;
 	}
-	
+	public boolean isSaltaWizard() {
+		return saltaWizard;
+	}
+
+	public void setSaltaWizard(boolean saltaWizard) {
+		this.saltaWizard = saltaWizard;
+	}
 }
