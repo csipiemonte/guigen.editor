@@ -587,6 +587,7 @@ public class GuigenModelWizard extends Wizard implements INewWizard {
 						((GuiModelFilesLocChooserWizardPage)wiz).setSaltaWizard(true);
 						((GuiModelFilesLocChooserWizardPage)wiz).setPageComplete(true);						
 						wiz = ((GuiModelFilesLocChooserWizardPage)wiz).getNextPage();			
+						
 					}
 				}
 				
