@@ -66,6 +66,17 @@ Questi file devono essere importati come risorsa nei modelli:
             id="guigen.editor.refactorwizards"
             name="Guigen refactoring wizards">
       </category>
+      <category
+            id="guigen.editor.uipatternwizards"
+            name="Guigen standard UI pattern wizards">
+      </category>
+      <wizard
+            category="guigen.editor.uipatternwizards"
+            class="it.csi.mddtools.guigen.editor.wizards.crud.NewEntityCRUDWizard"
+            icon="icons/full/obj16/GuigenModelFile.gif"
+            id="it.csi.mddtools.guigen.editor.wizards.crud.NewEntityCRUDWizard"
+            name="New Entity CRUD Structure">
+      </wizard>
    </extension>
 
    <extension point="org.eclipse.ui.editors">
