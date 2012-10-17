@@ -1,19 +1,35 @@
 package it.csi.mddtools.guigen.editor.wizards.crud;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
+
+import it.csi.mddtools.guigen.presentation.GuigenEditorPlugin;
+import it.csi.mddtools.guigen.presentation.GUIGENGenerateModelWizard.GuigenModelWizard.GuigenModelWizardNewFileCreationPage;
+
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import java.io.*;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
+
+import it.csi.mddtools.guigen.editor.wizards.crud.WizardHelper;
 
 /**
  * This is a sample new wizard. Its role is to create a new file 
@@ -27,8 +43,41 @@ import org.eclipse.ui.ide.IDE;
  */
 
 public class NewEntityCRUDWizard extends Wizard implements INewWizard {
-	private SampleNewWizardPage page;
-	private ISelection selection;
+	
+	private WizardInfo info;
+	
+	public WizardInfo getInfo() {
+		return info;
+	}
+
+	public void setInfo(WizardInfo info) {
+		this.info = info;
+	}
+
+//	private WizardHelper helper;
+	
+//	public WizardHelper getHelper() {
+//		return helper;
+//	}
+//
+//	public void setHelper(WizardHelper helper) {
+//		this.helper = helper;
+//	}
+
+
+
+	private SceltaModGuiPrimaPagWizard pageSceltaModPrinc;
+	private SceltaEntitaSecPagWizard pageSceltaEntita;
+	private SceltaPKeyTerzaPagWizard pageSceltaPrKeyEntita;
+	private SceltaFiltriEntitaQuartaPagWizard pageFiltriEntita;
+	private SceltaCampiTabQuintaPagWizard pageTabEntita;
+	 
+	
+	
+	protected IStructuredSelection selection;
+	
+	public static final List<String> FILE_EXTENSIONS =
+			Collections.unmodifiableList(Arrays.asList(GuigenEditorPlugin.INSTANCE.getString("_UI_GuigenEditorFilenameExtensions").split("\\s*,\\s*")));
 
 	/**
 	 * Constructor for SampleNewWizard.
@@ -36,6 +85,8 @@ public class NewEntityCRUDWizard extends Wizard implements INewWizard {
 	public NewEntityCRUDWizard() {
 		super();
 		setNeedsProgressMonitor(true);
+		 info = new WizardInfo();
+		
 	}
 	
 	/**
@@ -43,8 +94,20 @@ public class NewEntityCRUDWizard extends Wizard implements INewWizard {
 	 */
 
 	public void addPages() {
-		page = new SampleNewWizardPage(selection);
-		addPage(page);
+		
+		pageSceltaModPrinc = new SceltaModGuiPrimaPagWizard(selection, this);
+		pageSceltaEntita = new SceltaEntitaSecPagWizard(selection, this);
+		pageSceltaPrKeyEntita = new SceltaPKeyTerzaPagWizard(selection, this);
+		pageFiltriEntita = new SceltaFiltriEntitaQuartaPagWizard(selection, this);
+		pageTabEntita = new SceltaCampiTabQuintaPagWizard(selection, this);
+		addPage(pageSceltaModPrinc);
+		addPage(pageSceltaEntita);
+		addPage(pageSceltaPrKeyEntita);
+		addPage(pageFiltriEntita);
+		addPage(pageTabEntita);
+		
+		
+
 	}
 
 	/**
@@ -53,12 +116,13 @@ public class NewEntityCRUDWizard extends Wizard implements INewWizard {
 	 * using wizard as execution context.
 	 */
 	public boolean performFinish() {
-		final String containerName = page.getContainerName();
-		final String fileName = page.getFileName();
+		final String containerName = null;//pageSceltaModPrinc.getContainerName();
+		final String fileName = pageSceltaModPrinc.getFileName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doFinish(containerName, fileName, monitor);
+					//doFinish(containerName, fileName, monitor);
+					doFinish();
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -83,45 +147,55 @@ public class NewEntityCRUDWizard extends Wizard implements INewWizard {
 	 * file if missing or just replace its contents, and open
 	 * the editor on the newly created file.
 	 */
+	private void doFinish() throws CoreException {
 
-	private void doFinish(
-		String containerName,
-		String fileName,
-		IProgressMonitor monitor)
-		throws CoreException {
-		// create a sample file
-		monitor.beginTask("Creating " + fileName, 2);
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource resource = root.findMember(new Path(containerName));
-		if (!resource.exists() || !(resource instanceof IContainer)) {
-			throwCoreException("Container \"" + containerName + "\" does not exist.");
-		}
-		IContainer container = (IContainer) resource;
-		final IFile file = container.getFile(new Path(fileName));
-		try {
-			InputStream stream = openContentStream();
-			if (file.exists()) {
-				file.setContents(stream, true, true, monitor);
-			} else {
-				file.create(stream, true, monitor);
+			try {
+				WizardHelper.creaAppMod(info.getNomeEntita());
+				WizardHelper.creaAppDataGroup(info.getNomeEntita(), info);
+				WizardHelper.creaCPRicercaByAppModule(info);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			stream.close();
-		} catch (IOException e) {
-		}
-		monitor.worked(1);
-		monitor.setTaskName("Opening file for editing...");
-		getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchPage page =
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				try {
-					IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
-				}
-			}
-		});
-		monitor.worked(1);
-	}
+}
+//commento 10-10-2012 sera	private void doFinish(
+//		String containerName,
+//		String fileName,
+//		IProgressMonitor monitor)
+//		throws CoreException {
+//		// create a sample file
+//		monitor.beginTask("Creating " + fileName, 2);
+//		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+//		IResource resource = root.findMember(new Path(containerName));
+//		if (!resource.exists() || !(resource instanceof IContainer)) {
+//			throwCoreException("Container \"" + containerName + "\" does not exist.");
+//		}
+//		IContainer container = (IContainer) resource;
+//		final IFile file = container.getFile(new Path(fileName));
+//		try {
+//			InputStream stream = openContentStream();
+//			if (file.exists()) {
+//				file.setContents(stream, true, true, monitor);
+//			} else {
+//				file.create(stream, true, monitor);
+//			}
+//			stream.close();
+//		} catch (IOException e) {
+//		}
+//		monitor.worked(1);
+//		monitor.setTaskName("Opening file for editing...");
+//		getShell().getDisplay().asyncExec(new Runnable() {
+//			public void run() {
+//				IWorkbenchPage page =
+//					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+//				try {
+//					IDE.openEditor(page, file, true);
+//				} catch (PartInitException e) {
+//				}
+//			}
+//		});
+//		monitor.worked(1);
+//	}
 	
 	/**
 	 * We will initialize file contents with a sample text.
@@ -146,5 +220,11 @@ public class NewEntityCRUDWizard extends Wizard implements INewWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
+
+		
 	}
+	
+	
+	
+	
 }
