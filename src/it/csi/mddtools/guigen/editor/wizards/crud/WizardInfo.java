@@ -1,7 +1,6 @@
 package it.csi.mddtools.guigen.editor.wizards.crud;
 
 import it.csi.mddtools.guigen.Type;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,9 +8,7 @@ import java.util.Map;
 
 public class WizardInfo {
 	
-	
 	private Map<String, Type> mapNomeTipo =  new HashMap<String, Type>();
-	
 	
 	public Map<String, Type> getMapNomeTipo() {
 		return mapNomeTipo;
@@ -21,12 +18,10 @@ public class WizardInfo {
 		this.mapNomeTipo = mapNomeTipo;
 	}
 
-	private Map<String, Type> mapListaAttrEntita =  new HashMap<String, Type>();
+	 private Map<String, Type> mapListaAttrEntita =  new HashMap<String, Type>();
 	
 	
-	
-
-	public Map<String, Type> getMapListaAttrEntita() {
+	 public Map<String, Type> getMapListaAttrEntita() {
 		return mapListaAttrEntita;
 	}
 
@@ -34,10 +29,20 @@ public class WizardInfo {
 		this.mapListaAttrEntita = mapListaAttrEntita;
 	}
 	
+	private Map<String, FieldContext> mapListaAttrEntitaContext =  new HashMap<String, FieldContext>();
+	 
+	 
+	public Map<String, FieldContext> getMapListaAttrEntitaContext() {
+		return mapListaAttrEntitaContext;
+	}
+
+	public void setMapListaAttrEntitaContext(
+			Map<String, FieldContext> mapListaAttrEntitaContext) {
+		this.mapListaAttrEntitaContext = mapListaAttrEntitaContext;
+	}
+
 	List listaAttrEntita = new ArrayList();
 	
-	
-
 	public List getListaAttrEntita() {
 		return listaAttrEntita;
 	}
@@ -61,8 +66,6 @@ public class WizardInfo {
 	public void setNomeEntita(String nomeEntita) {
 		this.nomeEntita = nomeEntita;
 	}
-
-	
 
 	public String getIdPrimaryKey() {
 		return idPrimaryKey;
@@ -89,7 +92,4 @@ public class WizardInfo {
 	}
 	
 	
-	
-	
-
 }

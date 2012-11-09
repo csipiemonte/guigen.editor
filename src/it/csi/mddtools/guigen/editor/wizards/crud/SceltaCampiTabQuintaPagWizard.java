@@ -1,28 +1,10 @@
 package it.csi.mddtools.guigen.editor.wizards.crud;
 
 import it.csi.mddtools.guigen.GUIModel;
-import it.csi.mddtools.guigen.Type;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -31,9 +13,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well
@@ -44,9 +23,7 @@ import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 public class SceltaCampiTabQuintaPagWizard extends WizardPage {
 	
 	private NewEntityCRUDWizard wizard;
-	
 	private GUIModel guiModel;
-	
 	
 	public GUIModel getGuiModel() {
 		return guiModel;
@@ -57,11 +34,8 @@ public class SceltaCampiTabQuintaPagWizard extends WizardPage {
 	}
 	
 	private ISelection selection;
-	
 	private List wdgListAttrEntitaTab;
-	
 	private List wdgListCampiTabEntita;
-	
 	
 	public NewEntityCRUDWizard getWizard() {
 		return wizard;
@@ -114,7 +88,7 @@ public class SceltaCampiTabQuintaPagWizard extends WizardPage {
 		 (new Label(composite, SWT.NULL)).setText("Attributi dell'Entità:");
 		 (new Label(composite, SWT.NULL)).setText("Campi della tabella:");
 		    
-		 wdgListAttrEntitaTab = new List(composite,SWT.MULTI | SWT.BORDER| SWT.V_SCROLL);
+		  wdgListAttrEntitaTab = new List(composite,SWT.MULTI | SWT.BORDER| SWT.V_SCROLL);
 		    GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		    wdgListAttrEntitaTab.setLayoutData(gd);
 		    
@@ -126,15 +100,13 @@ public class SceltaCampiTabQuintaPagWizard extends WizardPage {
 		    btAddAttr.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					 if(wdgListAttrEntitaTab.getSelectionIndices().length > 0) {
-				          String[] listaAttrSel = wdgListAttrEntitaTab.getSelection();
-				          String[]	a =null;
-				         a =  WizardHelper.creaListaColonneTab(listaAttrSel);
-
-				         wdgListCampiTabEntita.setItems(a);
-				         if( a != null && a.length >0) {//10-10
+				         String[] listaAttrSel = wdgListAttrEntitaTab.getSelection();
+				         String[]	listaColTab = null;
+				         listaColTab =  WizardHelper.creaListaColonneTab(listaAttrSel);
+				         wdgListCampiTabEntita.setItems(listaColTab);
+				         if(listaColTab != null && listaColTab.length >0) {
 				            	updateStatus(null);
-				            }
-				           
+				            } 
 				    }
 				}
 			});
@@ -145,12 +117,10 @@ public class SceltaCampiTabQuintaPagWizard extends WizardPage {
 				public void widgetSelected(SelectionEvent e) {
 					
 					if(wdgListCampiTabEntita.getSelectionIndices().length > 0) {
-						
-						String[] b =null;
+						String[] campiTab = null;
 						String[] listaAttrDelete = wdgListCampiTabEntita.getSelection();
-				         b = WizardHelper.rimuoviCampiTab(listaAttrDelete);
-				          
-				         wdgListCampiTabEntita.setItems(b);
+						campiTab = WizardHelper.rimuoviCampiTab(listaAttrDelete);
+				         wdgListCampiTabEntita.setItems(campiTab);
 					}
 				}
 			});
@@ -158,15 +128,11 @@ public class SceltaCampiTabQuintaPagWizard extends WizardPage {
 		setControl(composite);
 	}
 	
-	
-	
-
 	/**
 	 * Ensures that both text fields are set.
 	 */
 
 	private void dialogChanged() {
-		
 		if(WizardHelper.getListaUnicaTab() != null && WizardHelper.getListaUnicaTab().size() > 0) {
 			updateStatus("ricordati di selezionare i campi della tua tabella");
 		}
@@ -177,6 +143,5 @@ public class SceltaCampiTabQuintaPagWizard extends WizardPage {
 		setPageComplete(message == null);
 	}
 
-	
 	
 }

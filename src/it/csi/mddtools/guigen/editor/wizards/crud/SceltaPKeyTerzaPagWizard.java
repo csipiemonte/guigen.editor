@@ -1,41 +1,19 @@
 package it.csi.mddtools.guigen.editor.wizards.crud;
 
-import java.io.IOException;
-
-import it.csi.mddtools.guigen.AppModule;
-import it.csi.mddtools.guigen.ComplexType;
-import it.csi.mddtools.guigen.Field;
 import it.csi.mddtools.guigen.GUIModel;
-import it.csi.mddtools.guigen.SimpleType;
-import it.csi.mddtools.guigen.Type;
-
-import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 
 /**
@@ -47,9 +25,7 @@ import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 public class SceltaPKeyTerzaPagWizard extends WizardPage {
 	
 	private NewEntityCRUDWizard wizard;
-	
-	private GUIModel guiModel;//6-10-2012
-	
+	private GUIModel guiModel;
 	
 	public GUIModel getGuiModel() {
 		return guiModel;
@@ -60,11 +36,7 @@ public class SceltaPKeyTerzaPagWizard extends WizardPage {
 	}
 
 	private ISelection selection;
-	
 	private Combo comboAttrEntity;
-	
-	
-	
 
 	public Combo getComboAttrEntity() {
 		return comboAttrEntity;
@@ -121,27 +93,21 @@ public class SceltaPKeyTerzaPagWizard extends WizardPage {
 			comboAttrEntity.setLayoutData(data);
 		}
 		
-		
 		comboAttrEntity.select(0);
 		comboAttrEntity.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent e) {
 		    	  int indexComboSelez = comboAttrEntity.getSelectionIndex();
 		    	  if(indexComboSelez != -1 ) {
-		    	
 		    		  wizard.getInfo().setIdPrimaryKey(comboAttrEntity.getItem(indexComboSelez));
 		    		  updateStatus(null);
 		    	  }
-
 		      }
 		    });
-		
 		dialogChanged();
 		setControl(composite);
-	
 	}
 
 	private void dialogChanged() {
-		
 		if(comboAttrEntity.getSelectionIndex() == -1) {
 			updateStatus("ricordati di selezionare la primary key");
 		}
@@ -150,8 +116,6 @@ public class SceltaPKeyTerzaPagWizard extends WizardPage {
 		}
 	}
 	
-	
-
 	private void updateStatus(String message) {
 		setErrorMessage(message);
 		setPageComplete(message == null);
@@ -159,26 +123,18 @@ public class SceltaPKeyTerzaPagWizard extends WizardPage {
 	
 	@Override
 	public IWizardPage getNextPage() {
-		
 		IWizardPage wiz = super.getNextPage();
-		
 		if(this.isPageComplete()) {
 			 if(wiz instanceof SceltaFiltriEntitaQuartaPagWizard) {
-				 
 				List wdgListAttrEntita = ((SceltaFiltriEntitaQuartaPagWizard)wiz).getWdgListAttrEntita();
 				List wdgListFiltriEntita = ((SceltaFiltriEntitaQuartaPagWizard)wiz).getWdgListFiltriEntita();
-				
-					String[] items = WizardHelper.getVettoreByList(wizard.getInfo().getListaAttrEntita());
-					wdgListAttrEntita.setItems(items);
-					
-					if(WizardHelper.getListaUnica().isEmpty()) {
-						wdgListFiltriEntita.removeAll();
-					}
-					
+				String[] items = WizardHelper.getVettoreByList(wizard.getInfo().getListaAttrEntita());
+				wdgListAttrEntita.setItems(items);
+				if(WizardHelper.getListaUnica().isEmpty()) {
+					wdgListFiltriEntita.removeAll();
+				}
 			}
 		}
-		
-			 
 		return wiz;	
 	}
 

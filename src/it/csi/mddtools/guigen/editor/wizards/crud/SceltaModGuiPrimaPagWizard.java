@@ -1,46 +1,18 @@
 package it.csi.mddtools.guigen.editor.wizards.crud;
 
-import it.csi.mddtools.guigen.AppModule;
-import it.csi.mddtools.guigen.ComplexType;
-import it.csi.mddtools.guigen.ContentPanel;
-import it.csi.mddtools.guigen.Field;
-import it.csi.mddtools.guigen.FormPanel;
 import it.csi.mddtools.guigen.GUIModel;
 import it.csi.mddtools.guigen.GuigenFactory;
 import it.csi.mddtools.guigen.GuigenPackage;
-import it.csi.mddtools.guigen.SimpleType;
-import it.csi.mddtools.guigen.Type;
-import it.csi.mddtools.guigen.TypeNamespace;
-import it.csi.mddtools.guigen.Typedefs;
-import it.csi.mddtools.guigen.impl.ComplexTypeImpl;
-import it.csi.mddtools.guigen.impl.SimpleTypeImpl;
 import it.csi.mddtools.guigen.presentation.GUIGENGenerateModelWizard.GuigenModelWizard.GuigenModelWizardInitialObjectCreationPage;
-
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -48,7 +20,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -56,11 +27,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
-import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well
@@ -71,13 +39,9 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 public class SceltaModGuiPrimaPagWizard extends WizardPage {
 	
 	private NewEntityCRUDWizard wizard;
-	
 	private Text containerText;
-
 	private Text fileText;
-
 	private ISelection selection;
-	
 	
 
 	/**
@@ -115,7 +79,6 @@ public class SceltaModGuiPrimaPagWizard extends WizardPage {
 		setTitle("Guigen Model (modello principale Gui Model)");
 		setDescription("Questo wizard ti guiderà nella creazione del CRUD di un'entità. Comicia con il selezionare il Gui Model della tua applicazione");
 		this.selection = selection;
-		
 	}
 
 	/**
@@ -136,11 +99,10 @@ public class SceltaModGuiPrimaPagWizard extends WizardPage {
 		fileText.setLayoutData(gd);
 		fileText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				dialogChanged();//viene chiamata dopo aver selezionato il file nelle risorse  
+				dialogChanged(); 
 			}
 		});
 		
-
 		Button button = new Button(container, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
@@ -148,15 +110,8 @@ public class SceltaModGuiPrimaPagWizard extends WizardPage {
 				handleBrowse();
 			}
 		});
-		
-		//add 10-10
-		
 		dialogChanged();
-//				setErrorMessage(null);
-//				setPageComplete(false);
-		
 		setControl(container);
-		
 	}
 
 	
@@ -182,16 +137,14 @@ public class SceltaModGuiPrimaPagWizard extends WizardPage {
 				"Seleziona il file del modello pricipale");
 		if (dialog.open() == ContainerSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
-			 resulta = ((File) result[0]);//resulta.toString() L/wizardcrudmdd/src/model/wizardcrud/wizardcrud.guigen
-			 pathFile = resulta.getFullPath();//pathFile:/wizardcrudmdd/src/model/wizardcrud/wizardcrud.guigen
-			 dirPadreModPrinc = resulta.getParent();//getParent:" +resulta.getParent().toString().substring(1)); /wizardcrudmdd/src/model/wizardcrud
+			 resulta = ((File) result[0]);
+			 pathFile = resulta.getFullPath();
+			 dirPadreModPrinc = resulta.getParent();
 			if (result.length == 1) {
 				fileText.setText(pathFile.toString());
 				WizardHelper.setFile(resulta);
-				//WizardHelper.setPahtFile(dirPadreModPrinc.toString().substring(1));
 			}
 		}
-		
 	}
 	
 
@@ -200,15 +153,11 @@ public class SceltaModGuiPrimaPagWizard extends WizardPage {
 	 */
 
 	private void dialogChanged() {
-		
 		String fileName = getFileName();
-		
-		//stamane 10-10
 		if(fileName == null || fileName.equals("") ) {
 			updateStatus("Selezionare un file di tipo GuiModel ");
 			return;
 		}
-	
 		if(!validatePage(fileName)){
 			updateStatus("Selezionare un modello di tipo GuiModel");
 			return;
@@ -231,23 +180,12 @@ public class SceltaModGuiPrimaPagWizard extends WizardPage {
 	protected boolean validatePage(String filename) {
 		boolean res = false;
 			try {
-				
-//				EObject emfMod= WizardHelper.getResource(filename);
-//				
-//				if (emfMod instanceof GUIModel) {
-//					this.setGuiModel((GUIModel)emfMod);
-//					WizardHelper.setGuiModel(guiModel);//8-10-2012
-//					res = true;
-//				}
 				res = WizardHelper.caricaModPrinc(filename);
-				
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
 			}
-		
 		return res;
-		
 	}
 	
 	
@@ -260,34 +198,20 @@ public class SceltaModGuiPrimaPagWizard extends WizardPage {
 	@Override
 	public IWizardPage getNextPage() {
 		IWizardPage wizPage = super.getNextPage();
-		
-
 		if(this.isPageComplete()) {
-		
 			GUIModel modello = WizardHelper.getGuiModel();
-		
 			if(modello != null) {	
-				
 				 if(wizPage instanceof SceltaEntitaSecPagWizard) {
-					 
 					Combo comboEntity = ((SceltaEntitaSecPagWizard)wizPage).getComboEntity();
-					
 					int numEleCombo = comboEntity.getItems().length;
-					
 					if(numEleCombo == 0 ) {
-						
 						String[] listaNomiComplexType = WizardHelper.getNameComplexType(modello,wizard.getInfo());
-						
 						comboEntity.setItems(listaNomiComplexType);
 					}
-					
 				}
 			}
 		}
-	
-		
 		return wizPage;
-			
 	}
 	
 	/**
@@ -301,10 +225,5 @@ public class SceltaModGuiPrimaPagWizard extends WizardPage {
 		EObject rootObject = guigenFactory.create(eClass);	
 		return rootObject;
 	}
-
-	
-	
-	
-	
 	
 }
