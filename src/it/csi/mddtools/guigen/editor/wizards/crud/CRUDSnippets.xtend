@@ -15,17 +15,17 @@ class CRUDSnippets {
 			«entityName» «filtroAppdataName» = theModel.getAppData«filtroAppdataName»();
 			result = validaFiltri(«filtroAppdataName», result);
 			if (result.getGlobalErrors().isEmpty() && result.getFldErrors().isEmpty()) {
-			ArrayList<«entityName»> «elencoAppdataName» = findElenco«entityName»(«filtroAppdataName»);
-			if («elencoAppdataName» != null &&  !«elencoAppdataName».isEmpty()) {
-			theModel.setAppData«elencoAppdataName»(«elencoAppdataName»);
-			result.setResultCode(RICERCA«entityName.toUpperCase()»_OUTCOME_CODE__OK);
+				ArrayList<«entityName»> «elencoAppdataName» = findElenco«entityName»(«filtroAppdataName»);
+				if («elencoAppdataName» != null &&  !«elencoAppdataName».isEmpty()) {
+					theModel.setAppData«elencoAppdataName»(«elencoAppdataName»);
+					result.setResultCode(RICERCA«entityName.toUpperCase()»_OUTCOME_CODE__OK);
+				} else {
+					theModel.setAppData«elencoAppdataName»(null);
+					result.getGlobalMessages().add("Non ci sono elementi che corrispondono ai criteri di ricerca selezionati");
+					result.setResultCode(RICERCA«entityName.toUpperCase()»_OUTCOME_CODE__KO);
+				}
 			} else {
-			theModel.setAppData«elencoAppdataName»(null);
-			result.getGlobalMessages().add("Non ci sono elementi che corrispondono ai criteri di ricerca selezionati");
-			result.setResultCode(RICERCA«entityName.toUpperCase()»_OUTCOME_CODE__KO);
-			}
-			} else {
-			result.setResultCode(RICERCA«entityName.toUpperCase()»_OUTCOME_CODE__KO);
+				result.setResultCode(RICERCA«entityName.toUpperCase()»_OUTCOME_CODE__KO);
 			}
 			result.setModel(theModel);
 			return result;
