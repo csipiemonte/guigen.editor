@@ -32,6 +32,7 @@ import it.csi.mddtools.guigen.GUIModel;
 import it.csi.mddtools.guigen.GuigenFactory;
 import it.csi.mddtools.guigen.GuigenPackage;
 import it.csi.mddtools.guigen.HorizontalFlowPanelLayout;
+import it.csi.mddtools.guigen.InlineCodeSnippet;
 import it.csi.mddtools.guigen.JumpCommand;
 import it.csi.mddtools.guigen.MultiPanel;
 import it.csi.mddtools.guigen.RefreshViewCommand;
@@ -107,6 +108,7 @@ public class WizardHelper {
 	private static final String SALVA = "Salva";
 	private static final String SHOW_DETAIL = "SHOW_DETAIL";
 	private static final String NO_ITEM_SELECTED ="NO_ITEM_SELECTED";
+	private static final String VIEW_DETAIL = "VIEW_DETAIL";
 	private static final String STANDARD_MSG = "stdMsg";
 	private static final String CHECK_BOX = "chk";
 	private static final String GUIGEN = "guigen";
@@ -116,6 +118,9 @@ public class WizardHelper {
 	private static final String RELATION_MAX_CARDINALITY = "relation-max-cardinality";
 	private static final String UNO = "1";
 	private static final String PUNTO = ".";
+	private static final String CRUD_OPERATION = "CrudOperation";
+	private static final String COMMON = "common";
+	private static final String STRING = "String";
 	private static ApplicationData appDataFiltro = null;
 	private static AppModule appModule = null;
 	private  MultiPanel multiPanelRicerca = null;
@@ -165,6 +170,16 @@ public class WizardHelper {
 		WizardHelper.appDataPK = appDataPK;
 	}
 	
+	private static ApplicationData appDataMethod= null;
+	
+	public static ApplicationData getAppDataMethod() {
+		return appDataMethod;
+	}
+
+	public static void setAppDataMethod(ApplicationData appDataMethod) {
+		WizardHelper.appDataMethod = appDataMethod;
+	}
+
 	private static ApplicationData appDataDett = null;
 	
 	public static ApplicationData getAppDataDett() {
@@ -582,7 +597,7 @@ public  static boolean isAggregatedSimple(Field attr) {
 						  if(source.equals(GUIGEN)) {
 							  listaAnnotazDett = annotazione.getDetails();
 							  relationType = getValueBykeyByListaAnnotationDetail(RELATION_TYPE, listaAnnotazDett);
-							  if(relationType != null && relationType.equals(AGGREGATED)) {//se la relazione è ti tipo aggregated con card=1
+							  if(relationType != null && relationType.equals(AGGREGATED)) {//se la relazione ï¿½ ti tipo aggregated con card=1
 								  relationMinCard = getValueBykeyByListaAnnotationDetail(RELATION_MIN_CARDINALITY, listaAnnotazDett);
 								  relationMaxCard = getValueBykeyByListaAnnotationDetail(RELATION_MAX_CARDINALITY, listaAnnotazDett);
 								  if(relationMinCard != null && relationMaxCard != null &&
@@ -1017,7 +1032,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				AppDataGroup appDataGroup = guigenFactory.createAppDataGroup();
 				appDataGroup.setName(lowerNomeEntita+APPDATA);
 				 
-				//creo appdata per il filtro dell'entità
+				//creo appdata per il filtro dell'entitï¿½
 				ApplicationData adf = guigenFactory.createApplicationData();
 				adf.setName(FILTRO+nomeEntita);
 				adf.setLifetimeExtent(DataLifetimeType.USER_SESSION);
@@ -1040,6 +1055,18 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				appDataPK = adPK;
 				//lo aggiungo all'appdata group
 				appDataGroup.getAppData().add(adPK);
+				
+				//14-11 creo appDataMethod
+				ApplicationData apdMethod = guigenFactory.createApplicationData();
+				apdMethod.setLifetimeExtent(DataLifetimeType.USER_SESSION);  //16-11-2012s
+				apdMethod.setName(WizardHelper.lowerFirstLetter(nomeEntita)+CRUD_OPERATION);
+				Type tipoString = WizardHelper.getTipoPrimitivo(COMMON, STRING);
+				apdMethod.setType(tipoString);
+				//apdMethod.setType(tipoPK);
+				appDataMethod = apdMethod;
+				appDataGroup.getAppData().add(apdMethod);
+				//14-11 end appDataMethod
+				
 				//creo appdata per dettaglio
 				ApplicationData adDett = guigenFactory.createApplicationData();
 				adDett.setName(DETTAGLIO+nomeEntita);
@@ -1050,7 +1077,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				//lo aggiungo all'appdata group
 				appDataGroup.getAppData().add(adDett);
 				
-				//creo appdata per elencoNomeEntità ovvero un vettore dell'entità
+				//creo appdata per elencoNomeEntitï¿½ ovvero un vettore dell'entitï¿½
 				ApplicationData adElencoNomeEntita = guigenFactory.createApplicationData();
 				adElencoNomeEntita.setName(ELENCO+nomeEntita);
 				adElencoNomeEntita.setLifetimeExtent(DataLifetimeType.USER_SESSION);
@@ -1058,9 +1085,9 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 	//			TypedArray tipoElencoNomeEntita = guigenFactory.createTypedArray();
 	//			tipoElencoNomeEntita.setName(ELENCO+nomeEntita+PARENTESI_QUADRE);
 	//			tipoElencoNomeEntita.setComponentType(tipoEntita);
-				//comentato 12-10 Type tipoElencoNomeEntita = getTipoArrayByName(nomeEntita);
+				//comentato 12-10 Type tipoElencoNomeEntita = getTipoArrayByName2(nomeEntita);
 				//12-10-2012
-				Type tipoElencoNomeEntita = getTipoArrayProva(nomeEntita, info);
+				Type tipoElencoNomeEntita = getTipoArrayByName(nomeEntita, info);
 				
 				adElencoNomeEntita.setType(tipoElencoNomeEntita);
 				//setto la variabile di Helper
@@ -1088,7 +1115,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 		}
 	
 		
-		public static Type getTypeByAttrNameField(String nomeAttributo, WizardInfo info) throws IOException {
+		public static Type getTypeByAttrNameField(String nomeAttributo, WizardInfo info)  {//14-11 ho tolto throws IOException
 			 Map<String, FieldContext> mapListaAttrEntita = info.getMapListaAttrEntitaContext();
 			 FieldContext fieldContext =  mapListaAttrEntita.get(nomeAttributo);
 			return fieldContext.getField().getType();
@@ -1110,6 +1137,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 			 cp.getAppData().add(appDataPK);
 			 cp.getAppData().add(appDataDett);
 			 cp.getAppData().add(appDataElencoEntita);
+			 cp.getAppData().add(appDataMethod);//14-11
 			 
 			 fp.setName(FP+RICERCA+nomeEntita);
 			 fp.setLabel(RICERCA+ " "+nomeEntita);
@@ -1168,6 +1196,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 			 clearAppdata.getAppData().add(appDataFiltro);
 			 clearAppdata.getAppData().add(appDataPK);
 			 clearAppdata.getAppData().add(appDataElencoEntita);
+			 clearAppdata.getAppData().add(appDataDett);
 			 
 			 seqCmdCPEnter.getCommands().add(clearAppdata);
 				
@@ -1201,7 +1230,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 		}
 		
 		
-		public  static ContentPanel creaCPDettaglioByAppModule( WizardInfo info, ContentPanel cpRicerca) throws IOException {//7-11 elimino che è statico 
+		public  static ContentPanel creaCPDettaglioByAppModule( WizardInfo info, ContentPanel cpRicerca) throws IOException {//7-11 elimino che ï¿½ statico 
 			
 				cpDettaglio = guigenFactory.createContentPanel();
 				 
@@ -1210,6 +1239,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				 cpDettaglio.setName(CP+upperFirstLetter(DETTAGLIO)+info.getNomeEntita());
 				 //aggiungere app data al cp
 				 cpDettaglio.getAppData().add(appDataDett);
+				 cpDettaglio.getAppData().add(appDataMethod);
 				
 				 fp.setName(FP+upperFirstLetter(DETTAGLIO)+info.getNomeEntita());
 				 fp.setLabel(upperFirstLetter(DETTAGLIO)+BLANK+info.getNomeEntita());
@@ -1274,6 +1304,14 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				 ExecCommand execCommandSalva = guigenFactory.createExecCommand();
 				 execCommandSalva.setMethodName(lowerFirstLetter(SALVA)+info.getNomeEntita());
 				 
+				 InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
+				 inlineCS.setLang("JAVA");
+				 inlineCS.setSnippetName("body");
+				 inlineCS.setSnippetPosition("executedMethod");
+				 inlineCS.setSnippetCode(new CRUDSnippets().salvaEntitySnippet(info.getNomeEntita(), appDataMethod.getName(), appDataDett.getName()).toString());
+				 
+				 execCommandSalva.getInlineCodeSnippets().add(inlineCS);
+				 
 				 CommandOutcome cmdOutOkSalva = guigenFactory.createCommandOutcome();
 				 cmdOutOkSalva.setResultCode(RESULT_CODE);
 				 
@@ -1306,7 +1344,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				
 				 VerticalFlowPanelLayout vfpLeft = guigenFactory.createVerticalFlowPanelLayout();
 				 fpLeft.setLayout(vfpLeft);
-				 ///////////////////////////////////////////
+				 
 				 UDLRCWidgetLayoutSpec udlrcWdgLeft = guigenFactory.createUDLRCWidgetLayoutSpec();
 				 udlrcWdgLeft.setValue(UDLRCSpecConstants.LEFT);
 				 fpLeft.setLayoutSpec(udlrcWdgLeft);
@@ -1320,7 +1358,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 		}
 
 
-public static  Type getTipoArrayByName(String nomeEntita)  {
+public static  Type getTipoArrayByName2(String nomeEntita)  {
 	
 	Typedefs tipi = guiModel.getTypedefs();
 	Type res = null;
@@ -1341,7 +1379,8 @@ public static  Type getTipoArrayByName(String nomeEntita)  {
 	return res;
 }
 
-public static  Type getTipoArrayProva(String nomeEntita, WizardInfo info)  {
+
+public static  Type getTipoArrayByName(String nomeEntita, WizardInfo info)  {
 	
 	Typedefs tipi = guiModel.getTypedefs();
 	Type res = null;
@@ -1349,7 +1388,7 @@ public static  Type getTipoArrayProva(String nomeEntita, WizardInfo info)  {
 	EList<Type> listaTipi;
 	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
 	//recupero il tipo dell'entita
-	//è di tipo complesso recupero il padre che mi dà il namespace da cui recupero il nome del TNS
+	//ï¿½ di tipo complesso recupero il padre che mi dï¿½ il namespace da cui recupero il nome del TNS
 	Type tipoEntita = getTipoByNameEntita(nomeEntita, info);
 	String tnsSource = null;
 	if(tipoEntita instanceof ComplexType) {
@@ -1359,7 +1398,7 @@ public static  Type getTipoArrayProva(String nomeEntita, WizardInfo info)  {
 	for (TypeNamespace namespace : listaNamespace) {
 		//se il namespace che scorro (for) ha quel nome
 		if(namespace.getName().equals(tnsSource)) {
-			//lì farò la mia ricerca: recupero lista tipi e cercherò quello con component type =nome entità.
+			//lï¿½ farï¿½ la mia ricerca: recupero lista tipi e cercherï¿½ quello con component type =nome entitï¿½.
 			listaTipi = namespace.getTypes();
 		  	for(Type tipo : listaTipi) {
 		  		if(tipo instanceof TypedArray && ((TypedArray) tipo).getComponentType().getName().equals(nomeEntita)) {
@@ -1370,6 +1409,36 @@ public static  Type getTipoArrayProva(String nomeEntita, WizardInfo info)  {
 	}
 	return res;
 }
+
+
+public static  Type getTipoPrimitivo(String nomeNamespace, String nomePrimitivo)  {
+	Type res = null;
+	EList<Type> listaTipi = null;
+	TypeNamespace namespace = findNamespace(nomeNamespace);
+	listaTipi = namespace.getTypes();
+	for(Type tipo : listaTipi) {
+  		if((tipo instanceof SimpleType) && ((SimpleType)tipo).getCode().getName().equals(nomePrimitivo.toUpperCase())) {
+  			res = tipo;
+  			break;
+  		}
+	}
+	return res;
+}
+
+
+public static  TypeNamespace findNamespace(String nomeNamespace)  {
+	Typedefs tipi = guiModel.getTypedefs();
+	TypeNamespace res = null;
+	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
+	for (TypeNamespace namespace : listaNamespace) {
+		if(namespace.getName().equals(nomeNamespace)) {
+			res = namespace;
+			break;
+		}
+	}
+	return res;
+}
+
 
 static private List<Integer> findIndex(String word) {
 	List<Integer> idxList = new ArrayList();
@@ -1443,173 +1512,6 @@ public static  ContentPanel findContentPanelByName(String namePanel)  {
 	}
 	return res;
 }
-
-// costruisce campi di tipo textField o calendar o boolean data la lista delgi attributi semplici e l'appdata 
-public static  void creaWidgetSemplici( String[] campiFiltri, ApplicationData appData, WizardInfo info,  WidgetsPanel wdgPanel) throws IOException {
-	 SimpleType tipoAttr = null;
-	 TextField textField = null;
-	 Calendar calendar = null;
-	 AppDataBinding appDataBinding = null;
-	 String campoFiltroNoPunto = null;
-	 for (int i = 0; i < campiFiltri.length; i++) {
-		 
-		tipoAttr = (SimpleType)getTypeByAttrName(campiFiltri[i], info);
-		SimpleTypeCodes stc = tipoAttr.getCode();
-		
-		appDataBinding = guigenFactory.createAppDataBinding();
-		appDataBinding.setPath(campiFiltri[i]);
-		appDataBinding.setAppData(appData);
-		
-		campoFiltroNoPunto = campiFiltri[i].replace(".", "");
-		
-		int stcVal = stc.getValue();
-		switch(stcVal) {
-			case SimpleTypeCodes.STRING_VALUE: 
-			case SimpleTypeCodes.INT_VALUE: {
-				textField = guigenFactory.createTextField();
-				textField.setName(TEXT_FIELD+upperFirstLetter(campoFiltroNoPunto));
-				textField.setDataType(tipoAttr);
-				textField.setLabel(splitCamelCase(campoFiltroNoPunto));
-				textField.setEnableEnrichment(true);
-				textField.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(textField);
-				break;
-				}
-			case SimpleTypeCodes.BOOLEAN_VALUE: {
-				CheckBox checkBox = guigenFactory.createCheckBox();
-				checkBox.setName(CHECK_BOX+upperFirstLetter(campoFiltroNoPunto));
-				checkBox.setDataType(tipoAttr);
-				checkBox.setLabel(splitCamelCase(campoFiltroNoPunto));
-				checkBox.setEnableEnrichment(true);
-				checkBox.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(checkBox);
-				break;
-			}
-			case SimpleTypeCodes.DATE_VALUE: {
-				calendar = guigenFactory.createCalendar();
-				calendar.setName(CALENDAR+upperFirstLetter(campoFiltroNoPunto));
-				calendar.setDataType(tipoAttr);
-				calendar.setLabel(splitCamelCase(campoFiltroNoPunto));
-				calendar.setEnableEnrichment(true);
-				calendar.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(calendar);
-				break;
-			}
-		}
-	 }
-}
-
-
-
-public static  void creaWidgetSemplici2( List<Field> campiFiltri, ApplicationData appData, WizardInfo info,  WidgetsPanel wdgPanel, String nomeFieldNodo) throws IOException {
-	
-	 SimpleType tipoAttr = null;
-	 TextField textField = null;
-	 Calendar calendar = null;
-	 AppDataBinding appDataBinding = null;
-	
-	 String path = null;
-	 String pathNoPunto = null;
-	 for (Field campo :campiFiltri) {
-		SimpleTypeCodes stc =  ((SimpleType)campo.getType()).getCode();
-		appDataBinding = guigenFactory.createAppDataBinding();
-		path = nomeFieldNodo+campo.getName();
-		appDataBinding.setPath(path);
-		appDataBinding.setAppData(appData);
-		pathNoPunto = path.replace(".", "");
-		
-		int stcVal = stc.getValue();
-		switch(stcVal) {
-			case SimpleTypeCodes.STRING_VALUE: 
-			case SimpleTypeCodes.INT_VALUE: {
-				textField = guigenFactory.createTextField();
-				textField.setName(TEXT_FIELD+upperFirstLetter(pathNoPunto));
-				textField.setDataType(tipoAttr);
-				textField.setLabel(splitCamelCase(pathNoPunto));
-				textField.setEnableEnrichment(true);
-				textField.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(textField);
-				break;
-				}
-			case SimpleTypeCodes.BOOLEAN_VALUE: {
-				CheckBox checkBox = guigenFactory.createCheckBox();
-				checkBox.setName(CHECK_BOX+upperFirstLetter(pathNoPunto));
-				checkBox.setDataType(tipoAttr);
-				checkBox.setLabel(splitCamelCase(pathNoPunto));
-				checkBox.setEnableEnrichment(true);
-				checkBox.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(checkBox);
-				break;
-			}
-			case SimpleTypeCodes.DATE_VALUE: {
-				calendar = guigenFactory.createCalendar();
-				calendar.setName(CALENDAR+upperFirstLetter(pathNoPunto));
-				calendar.setDataType(tipoAttr);
-				calendar.setLabel(splitCamelCase(pathNoPunto));
-				calendar.setEnableEnrichment(true);
-				calendar.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(calendar);
-				break;
-			}
-		}
-	 }
-}
-
-public static  void creaWidgetSemplici3( List<Field> campiFiltri, ApplicationData appData, WizardInfo info,  WidgetsPanel wdgPanel, String nomeFieldNodo) throws IOException {
-	
-	 SimpleType tipoAttr = null;
-	 TextField textField = null;
-	 Calendar calendar = null;
-	 AppDataBinding appDataBinding = null;
-	 String campoFiltroNoPunto = null;
-	 String path = null;
-	 String pathNoPunto = null;
-	 for (Field campo :campiFiltri) {
-		 
-		SimpleTypeCodes stc =  ((SimpleType)campo.getType()).getCode();
-		appDataBinding = guigenFactory.createAppDataBinding();
-		path = campo.getName();
-		appDataBinding.setPath(path);
-		appDataBinding.setAppData(appData);
-		pathNoPunto = path.replace(".", "");
-		
-		int stcVal = stc.getValue();
-		switch(stcVal) {
-			case SimpleTypeCodes.STRING_VALUE: 
-			case SimpleTypeCodes.INT_VALUE: {
-				textField = guigenFactory.createTextField();
-				textField.setName(TEXT_FIELD+upperFirstLetter(pathNoPunto));
-				textField.setDataType(tipoAttr);
-				textField.setLabel(splitCamelCase(pathNoPunto));
-				textField.setEnableEnrichment(true);
-				textField.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(textField);
-				break;
-				}
-			case SimpleTypeCodes.BOOLEAN_VALUE: {
-				CheckBox checkBox = guigenFactory.createCheckBox();
-				checkBox.setName(CHECK_BOX+upperFirstLetter(pathNoPunto));
-				checkBox.setDataType(tipoAttr);
-				checkBox.setLabel(splitCamelCase(pathNoPunto));
-				checkBox.setEnableEnrichment(true);
-				checkBox.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(checkBox);
-				break;
-			}
-			case SimpleTypeCodes.DATE_VALUE: {
-				calendar = guigenFactory.createCalendar();
-				calendar.setName(CALENDAR+upperFirstLetter(pathNoPunto));
-				calendar.setDataType(tipoAttr);
-				calendar.setLabel(splitCamelCase(pathNoPunto));
-				calendar.setEnableEnrichment(true);
-				calendar.setDatabinding(appDataBinding);
-				wdgPanel.getWidgets().add(calendar);
-				break;
-			}
-		}
-	 }
-}
-
 
 public static FormPanel  creaFormPanelUp()  {
 	
@@ -1690,6 +1592,14 @@ public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, C
 	 ExecCommand execCommandRicerca = guigenFactory.createExecCommand();
 	 execCommandRicerca.setMethodName(lowerFirstLetter(RICERCA)+nomeEntita);
 	 
+	 InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
+	 inlineCS.setLang("JAVA");
+	 inlineCS.setSnippetName("body");
+	 inlineCS.setSnippetPosition("executedMethod");
+	 inlineCS.setSnippetCode(new CRUDSnippets().ricercaEntitySnippet(nomeEntita, appDataFiltro.getName(), appDataElencoEntita.getName()).toString());
+	 
+	 execCommandRicerca.getInlineCodeSnippets().add(inlineCS);
+	 
 	 CommandOutcome cmdOutOkRic = guigenFactory.createCommandOutcome();
 	 cmdOutOkRic.setResultCode(RESULT_CODE);
 	 
@@ -1744,14 +1654,31 @@ public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, C
 	 
 	 Button btInserisciEntita = creaBottone(info, INSERISCI, cmdPanel, CommandFunctions.ADD_ITEM);
 	 EventHandler evHandleInsert = creaEventoHandlerBottone(btInserisciEntita);
-
+	 
+	 ExecCommand execCommandInsert = guigenFactory.createExecCommand();
+	 execCommandInsert.setMethodName("insertDett"+info.getNomeEntita());
+	  
+	 InlineCodeSnippet inlineInsertCS = guigenFactory.createInlineCodeSnippet();
+	 inlineInsertCS.setLang("JAVA");
+	 inlineInsertCS.setSnippetName("body");
+	 inlineInsertCS.setSnippetPosition("executedMethod");
+	 inlineInsertCS.setSnippetCode(new CRUDSnippets().insertEntitySnippet(nomeEntita, appDataMethod.getName()).toString());
+	 execCommandInsert.getInlineCodeSnippets().add(inlineInsertCS);
+	 
+	 CommandOutcome cmdOutViewDetail = guigenFactory.createCommandOutcome();
+	 cmdOutViewDetail.setResultCode(VIEW_DETAIL);
+	 
+	 evHandleInsert.setCommand(execCommandInsert);
+	 execCommandInsert.getResults().add(cmdOutViewDetail);
+	 
 	 JumpCommand jCmdFromInsertToDett = guigenFactory.createJumpCommand();
-	 evHandleInsert.setCommand(jCmdFromInsertToDett);
-	
+	 cmdOutViewDetail.setCommand(jCmdFromInsertToDett);
+	 
 	 cpDettaglio = creaCPDettaglioByAppModule(info, cp);
+	 
 	 jCmdFromInsertToDett.setJumpTo(cpDettaglio);
 	
-	 creaCmdPanelTabellaEntita(info, fpMultiPanelTab);
+	 creaCmdPanelTabellaEntita(info, fpMultiPanelTab, fpCenter);
 	 
 	 return cmdPanel;
 }
@@ -1821,11 +1748,13 @@ public MultiPanel creaMultiPanelRicerca(WizardInfo info) {
 	return multiPanelRicerca;
 }
 
-public static void creaCmdPanelTabellaEntita( WizardInfo info, FormPanel fpMultiPanelTab) {
+
+public static void creaCmdPanelTabellaEntita( WizardInfo info, FormPanel fpMultiPanelTab, FormPanel fpCenter) {
 	 String nomeEntita = info.getNomeEntita();
 	 
+	 Type tipoPk = getTypeByAttrNameField(info.getIdPrimaryKey(), info);
+	
 	 CommandPanel cmdPanelTabEntita = guigenFactory.createCommandPanel();
-	 
 	 cmdPanelTabEntita.setName("cmdTab"+nomeEntita);
 	 
 	 HorizontalFlowPanelLayout hfplTabEntita = guigenFactory.createHorizontalFlowPanelLayout();
@@ -1846,6 +1775,13 @@ public static void creaCmdPanelTabellaEntita( WizardInfo info, FormPanel fpMulti
 	 ExecCommand execCommandElimina = guigenFactory.createExecCommand();
 	 execCommandElimina.setMethodName(lowerFirstLetter(ELIMINA)+info.getNomeEntita());
 	 
+	 InlineCodeSnippet inlineCSElim = guigenFactory.createInlineCodeSnippet();
+	 inlineCSElim.setLang("JAVA");
+	 inlineCSElim.setSnippetName("body");
+	 inlineCSElim.setSnippetPosition("executedMethod");
+	 inlineCSElim.setSnippetCode(new CRUDSnippets().eliminaEntitySnippet(nomeEntita, appDataPK.getName(), appDataElencoEntita.getName(), tipoPk.getName()).toString());
+	 execCommandElimina.getInlineCodeSnippets().add(inlineCSElim);
+	 
 	 CommandOutcome cmdOutOkElimina = guigenFactory.createCommandOutcome();
 	 cmdOutOkElimina.setResultCode(RESULT_CODE);
 	
@@ -1865,6 +1801,7 @@ public static void creaCmdPanelTabellaEntita( WizardInfo info, FormPanel fpMulti
 	 cmdOutKoElimina.setCommand(refreshVCmdKoElimina);
 	 refreshVCmdKoElimina.getTargetWidgets().add(btEliminaEntita);
 	 refreshVCmdKoElimina.getTargetPanels().add(fpMultiPanelTab);
+	 refreshVCmdKoElimina.getTargetPanels().add(fpCenter.getSubpanels().get(0)); 
 	 
 	 cmdPanelTabEntita.getWidgets().add(btEliminaEntita);
 	 
@@ -1884,6 +1821,14 @@ public static void creaCmdPanelTabellaEntita( WizardInfo info, FormPanel fpMulti
 	 ExecCommand execCommandDett = guigenFactory.createExecCommand();
 	 execCommandDett.setMethodName("vaiDett"+info.getNomeEntita());
 	 
+	 InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
+	 inlineCS.setLang("JAVA");
+	 inlineCS.setSnippetName("body");
+	 inlineCS.setSnippetPosition("executedMethod");
+	 inlineCS.setSnippetCode(new CRUDSnippets().dettaglioEntitySnippet(nomeEntita, appDataPK.getName(),appDataMethod.getName(), appDataDett.getName(), tipoPk.getName()).toString());
+	 
+	 execCommandDett.getInlineCodeSnippets().add(inlineCS);
+		
 	 CommandOutcome cmdOutShowDetail = guigenFactory.createCommandOutcome();
 	 cmdOutShowDetail.setResultCode(SHOW_DETAIL);
 	 
@@ -1904,7 +1849,9 @@ public static void creaCmdPanelTabellaEntita( WizardInfo info, FormPanel fpMulti
 	 cmdOutNoItemSelected.setCommand(refreshVCDett);
 	 refreshVCDett.getTargetWidgets().add(btDettEntita);
 	 refreshVCDett.getTargetPanels().add(fpMultiPanelTab);
+	 refreshVCDett.getTargetPanels().add(fpCenter.getSubpanels().get(0)); 
 }
+
 
 public static Button creaBottone(WizardInfo info, String nomeBottone, CommandPanel cmdPanel,  CommandFunctions cmdFunction)  {
 	 Button btRicerca = guigenFactory.createButton();
@@ -1925,15 +1872,6 @@ public static EventHandler creaEventoHandlerBottone(Button button) {
 	 
 	return  evHandler;
 }
-
-
-
-
-		
-		
-
-	
-
 		
 
 }
