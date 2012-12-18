@@ -16,6 +16,7 @@ import it.csi.mddtools.guigen.CheckBox;
 import it.csi.mddtools.guigen.ClearAppdataCommand;
 import it.csi.mddtools.guigen.Column;
 import it.csi.mddtools.guigen.ColumnModel;
+import it.csi.mddtools.guigen.ComboBox;
 import it.csi.mddtools.guigen.CommandFunctions;
 import it.csi.mddtools.guigen.CommandOutcome;
 import it.csi.mddtools.guigen.CommandPanel;
@@ -34,7 +35,9 @@ import it.csi.mddtools.guigen.GuigenPackage;
 import it.csi.mddtools.guigen.HorizontalFlowPanelLayout;
 import it.csi.mddtools.guigen.InlineCodeSnippet;
 import it.csi.mddtools.guigen.JumpCommand;
+import it.csi.mddtools.guigen.MultiDataWidget;
 import it.csi.mddtools.guigen.MultiPanel;
+import it.csi.mddtools.guigen.NOPCommand;
 import it.csi.mddtools.guigen.RefreshViewCommand;
 import it.csi.mddtools.guigen.SequenceCommand;
 import it.csi.mddtools.guigen.SimpleType;
@@ -52,6 +55,7 @@ import it.csi.mddtools.guigen.UDLRCWidgetLayoutSpec;
 import it.csi.mddtools.guigen.VerticalFlowPanelLayout;
 import it.csi.mddtools.guigen.Widget;
 import it.csi.mddtools.guigen.WidgetsPanel;
+import it.csi.mddtools.guigen.impl.AppDataBindingImpl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,16 +89,30 @@ public class WizardHelper {
 	private static final String CENTER = "Center";
 	private static final String UP = "Up";
 	private static final String ELENCO = "elenco";
+	private static final String LISTA = "lista";
 	private static final String FILTRO = "filtro";
+	private static final String FLT = "flt";
 	private static final String ID = "id";
 	private static final String SELEZIONATO = "Selezionato";
 	private static final String DETTAGLIO = "dettaglio";
+	private static final String DTL = "dtl";
+	private static final String ITEMS = "Items";
+	private static final String SELECTED_KEYS = "SelectedKeys";
+	private static final String LOAD = "load";
+	private static final String ELEMENTS = "Elements";
+	private static final String DETT = "Dett";
+	private static final String DETT_M = "dett";
 	private static final String PARENTESI_QUADRE = "[]";
 	private static final String RICERCA = "Ricerca";
+	private static final String FIX = "fix";
+	private static final String VIEW = "view";
 	private static final String NUOVA = "nuova";
 	private static final String BLANK = " ";
 	private static final String RESULT_CODE = "OK";
 	private static final String RESULT_CODE_KO = "KO";
+	private static final String OK = "OK";
+	private static final String KO = "KO";
+	private static final String FIXVIEW = "FIXVIEW";
 	private static final String MULTI_PANEL = "mp";
 	private static final String TAB = "tab";
 	private static final String FORM_PANEL = "fp";
@@ -111,8 +129,12 @@ public class WizardHelper {
 	private static final String VIEW_DETAIL = "VIEW_DETAIL";
 	private static final String STANDARD_MSG = "stdMsg";
 	private static final String CHECK_BOX = "chk";
+	private static final String COMBO_BOX = "cmbx";
 	private static final String GUIGEN = "guigen";
 	private static final String AGGREGATED = "aggregated";
+	private static final String DECODED = "decoded";
+	private static final String SINGLE_FIELD_ID = "single-field-id"; 
+	private static final String SHORT_DESCRIPTION = "short-description";
 	private static final String RELATION_TYPE = "relation-type";
 	private static final String RELATION_MIN_CARDINALITY = "relation-min-cardinality";
 	private static final String RELATION_MAX_CARDINALITY = "relation-max-cardinality";
@@ -123,6 +145,39 @@ public class WizardHelper {
 	private static final String STRING = "String";
 	private static ApplicationData appDataFiltro = null;
 	private static AppModule appModule = null;
+	private static AppDataGroup appDataGroup = null; 
+	private static CPCommand cpCmdEnter = null; 
+	
+	private static CPCommand cpCmdEnterDett = null;
+	
+	public static ArrayList<ExecCommand> listaRicercaExecCmdFix = new ArrayList<ExecCommand>();
+	
+	public static ArrayList<ExecCommand> listaDettExecCmdFix = new ArrayList<ExecCommand>();
+	
+	public static CPCommand getCpCmdEnter() {
+		return cpCmdEnter;
+	}
+
+	public static void setCpCmdEnter(CPCommand cpCmdEnter) {
+		WizardHelper.cpCmdEnter = cpCmdEnter;
+	}
+	
+	public static CPCommand getCpCmdEnterDett() {
+		return cpCmdEnterDett;
+	}
+
+	public static void setCpCmdEnterDett(CPCommand cpCmdEnterDett) {
+		WizardHelper.cpCmdEnterDett = cpCmdEnterDett;
+	}
+
+	public static AppDataGroup getAppDataGroup() {
+		return appDataGroup;
+	}
+
+	public static void setAppDataGroup(AppDataGroup appDataGroup) {
+		WizardHelper.appDataGroup = appDataGroup;
+	}
+
 	private  MultiPanel multiPanelRicerca = null;
 	
 	public  MultiPanel getMultiPanelRicerca() {
@@ -309,122 +364,117 @@ public class WizardHelper {
 		WizardHelper.listaUnicaTab = listaUnicaTab;
 	}
 	
-	public static Resource getResourceGen(String filename) throws IOException {
-		Resource resource = null;
-		String modPrincFilePath = filename;
-		URI modPrincFileURI = URI.createPlatformResourceURI(modPrincFilePath, true);
-		if(resourceSet != null) {
-		 resource = resourceSet.createResource(modPrincFileURI);
-		 Map<Object, Object> options = new HashMap<Object, Object>();
-		 resource.load(options);
-		}
-	   return resource;
+public static Resource getResourceGen(String filename) throws IOException {
+	Resource resource = null;
+	String modPrincFilePath = filename;
+	URI modPrincFileURI = URI.createPlatformResourceURI(modPrincFilePath, true);
+	if(resourceSet != null) {
+	 resource = resourceSet.createResource(modPrincFileURI);
+	 Map<Object, Object> options = new HashMap<Object, Object>();
+	 resource.load(options);
 	}
+   return resource;
+}
 	
-	public static boolean caricaModPrinc(String nomeFile) throws IOException {
-		EObject emfMod = null;
-		boolean res = false;
-		
-		creaResultSet();
-		Resource resource = getResourceGen(nomeFile);
-		if(resource != null) {
-			EList<EObject> resourceContent = resource.getContents();
-			if(resourceContent != null && resourceContent.size()> 0) {
-				emfMod = resourceContent.get(0);
-				if(isModPrinc(emfMod)) {
-					setGuiModel((GUIModel)emfMod);
-					setModPrincResource(resource);
-					res = true;
-				 }else {
-					resourceSet = null;
-				}
+public static boolean caricaModPrinc(String nomeFile) throws IOException {
+	EObject emfMod = null;
+	boolean res = false;
+	
+	creaResultSet();
+	Resource resource = getResourceGen(nomeFile);
+	if(resource != null) {
+		EList<EObject> resourceContent = resource.getContents();
+		if(resourceContent != null && resourceContent.size()> 0) {
+			emfMod = resourceContent.get(0);
+			if(isModPrinc(emfMod)) {
+				setGuiModel((GUIModel)emfMod);
+				setModPrincResource(resource);
+				res = true;
+			 }else {
+				resourceSet = null;
 			}
+		}
+	}
+	return res;
+}
+	
+public static boolean isModPrinc(EObject modello) throws IOException {
+	boolean res = false;
+		if (modello instanceof GUIModel) {
+			res = true;
 		}
 		return res;
-	}
-	
-	public static boolean isModPrinc(EObject modello) throws IOException {
-		boolean res = false;
-			if (modello instanceof GUIModel) {
-				res = true;
-			}
-			return res;
-	}
-	
-	public static EList<TypeNamespace>  getAllNamespace(GUIModel guiModel) throws IOException {
-		
-		Typedefs tipi = guiModel.getTypedefs();
-		
-		EList<TypeNamespace> listaNameSpace = tipi.getExtNamespaces();
-		
-			return listaNameSpace;
-		}
-	
-		public static List<String>  getNameComplexTypeByNamespace(EList<TypeNamespace> listaNamespace) throws IOException {
-			EList<Type> listaTipi;
-			List<String> listaNomeTipiComplex = new ArrayList<String>();
-			for (TypeNamespace typeNamespace : listaNamespace) {
-			  	listaTipi = typeNamespace.getTypes();
-			  	for(Type tipo : listaTipi) {
-			  		if(tipo instanceof ComplexType) {
-			  			listaNomeTipiComplex.add(tipo.getName());
-			  		}
-			  	}
-			}
-			Collections.sort(listaNomeTipiComplex);
-			return listaNomeTipiComplex;
-		}
-		
-		
-		public static List<String> getNameComplexTypeByModPrinc(GUIModel guiModel)  {
-			
-			Typedefs tipi = guiModel.getTypedefs();
-			EList<Type> listaTipi;
-			EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
-			
-			List<String> listaNomeTipiComplex = new ArrayList<String>();
-			for (TypeNamespace typeNamespace : listaNamespace) {
-			  	listaTipi = typeNamespace.getTypes();
-			  	for(Type tipo : listaTipi) {
-			  		if(tipo instanceof ComplexType) {
-			  			listaNomeTipiComplex.add(tipo.getName());
-			  		}
-			  	}
-			}
-			Collections.sort(listaNomeTipiComplex);
-			return listaNomeTipiComplex;
-		}
-		
-		public static  Map<String, Type> getNameComplexTypeByModPrincMapp(GUIModel guiModel)  {
-			
-			Typedefs tipi = guiModel.getTypedefs();
-			
-			EList<Type> listaTipi;
-			EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
-			
-			Map <String, Type> mapListaAttrEntita = new HashMap<String, Type>();
-			for (TypeNamespace typeNamespace : listaNamespace) {
-			  	listaTipi = typeNamespace.getTypes();
-			  	for(Type tipo : listaTipi) {
-			  		if(tipo instanceof ComplexType) {
-			  			mapListaAttrEntita.put(tipo.getName(), tipo);
-			  		}
-			  	}
-			}
-			return mapListaAttrEntita;
-		}
-		
+}
 
-public static List<String> getNameComplexTypeByModPrincFull(GUIModel guiModel, WizardInfo info)  {
+public static EList<TypeNamespace>  getAllNamespace(GUIModel guiModel) throws IOException {
+	
+	Typedefs tipi = guiModel.getTypedefs();
+	
+	EList<TypeNamespace> listaNameSpace = tipi.getExtNamespaces();
+	
+		return listaNameSpace;
+	}
 
+	public static List<String>  getNameComplexTypeByNamespace(EList<TypeNamespace> listaNamespace) throws IOException {
+		EList<Type> listaTipi;
+		List<String> listaNomeTipiComplex = new ArrayList<String>();
+		for (TypeNamespace typeNamespace : listaNamespace) {
+		  	listaTipi = typeNamespace.getTypes();
+		  	for(Type tipo : listaTipi) {
+		  		if(tipo instanceof ComplexType) {
+		  			listaNomeTipiComplex.add(tipo.getName());
+		  		}
+		  	}
+		}
+		Collections.sort(listaNomeTipiComplex);
+		return listaNomeTipiComplex;
+	}
+		
+		
+public static List<String> getNameComplexTypeByModPrinc(GUIModel guiModel)  {
+	
 	Typedefs tipi = guiModel.getTypedefs();
 	EList<Type> listaTipi;
 	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
 	
 	List<String> listaNomeTipiComplex = new ArrayList<String>();
+	for (TypeNamespace typeNamespace : listaNamespace) {
+	  	listaTipi = typeNamespace.getTypes();
+	  	for(Type tipo : listaTipi) {
+	  		if(tipo instanceof ComplexType) {
+	  			listaNomeTipiComplex.add(tipo.getName());
+	  		}
+	  	}
+	}
+	Collections.sort(listaNomeTipiComplex);
+	return listaNomeTipiComplex;
+}
+		
+public static  Map<String, Type> getNameComplexTypeByModPrincMapp(GUIModel guiModel)  {
 	
+	Typedefs tipi = guiModel.getTypedefs();
+	
+	EList<Type> listaTipi;
+	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
+	
+	Map <String, Type> mapListaAttrEntita = new HashMap<String, Type>();
+	for (TypeNamespace typeNamespace : listaNamespace) {
+	  	listaTipi = typeNamespace.getTypes();
+	  	for(Type tipo : listaTipi) {
+	  		if(tipo instanceof ComplexType) {
+	  			mapListaAttrEntita.put(tipo.getName(), tipo);
+	  		}
+	  	}
+	}
+	return mapListaAttrEntita;
+}
+		
+public static List<String> getNameComplexTypeByModPrincFull(GUIModel guiModel, WizardInfo info)  {
+	Typedefs tipi = guiModel.getTypedefs();
+	EList<Type> listaTipi;
+	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
+	List<String> listaNomeTipiComplex = new ArrayList<String>();
 	Map<String, Type> mapNomeTipo =  new HashMap<String, Type>();
-	
 	for (TypeNamespace typeNamespace : listaNamespace) {
 	  	listaTipi = typeNamespace.getTypes();
 	  	for(Type tipo : listaTipi) {
@@ -435,80 +485,58 @@ public static List<String> getNameComplexTypeByModPrincFull(GUIModel guiModel, W
 	  	}
 	}
 	info.setMapNomeTipo(mapNomeTipo);
-	
 	Collections.sort(listaNomeTipiComplex);
-	
 	return listaNomeTipiComplex;
 }
-		public static String[] getVettoreByList(List<String> lista) {
-			
-			int dim = lista.size();
-			String[] items= new String[dim];
-			for (int i = 0; i < lista.size(); i++) {
-				items[i] = (String)lista.get(i);
-			}
-			return items;
-		}
-		
 
-		public static String[] getNameComplexType(GUIModel guiModel, WizardInfo info) {
-			
-			List<String> lista = WizardHelper.getNameComplexTypeByModPrincFull(guiModel, info); 
-			
-			return WizardHelper.getVettoreByList(lista);
-				}
+public static String[] getVettoreByList(List<String> lista) {
+	int dim = lista.size();
+	String[] items= new String[dim];
+	for (int i = 0; i < lista.size(); i++) {
+		items[i] = (String)lista.get(i);
+	}
+	return items;
+}
 		
-		
-		public static Type getTipoByNameEntita(String nomeEntita, WizardInfo info) {
-			
-			Type tipoEntita = (Type)info.getMapNomeTipo().get(nomeEntita);
-			
-			return tipoEntita;
-		
-		}
+public static String[] getNameComplexType(GUIModel guiModel, WizardInfo info) {
+	List<String> lista = WizardHelper.getNameComplexTypeByModPrincFull(guiModel, info); 
+	return WizardHelper.getVettoreByList(lista);
+}
+
+public static Type getTipoByNameEntita(String nomeEntita, WizardInfo info) {
+	Type tipoEntita = (Type)info.getMapNomeTipo().get(nomeEntita);
+	return tipoEntita;
+}
 	
 public static  List<String> getListaAttrByNameEntitaByInfo(String nomeEntita, WizardInfo info) {
-			
-			Type tipoEntita = (Type)info.getMapNomeTipo().get(nomeEntita);
-			
-			EList<Field> listaAttributi =((ComplexType) tipoEntita).getAllFields();
-			
-			List<String> listaAttrEntita = new ArrayList<String>();
-			
- 			 for(Field attr :listaAttributi) {
- 				 if(attr.getType() instanceof SimpleType) {
- 					listaAttrEntita.add(attr.getName());
- 				 }
- 			 }
- 			 return listaAttrEntita;
-		}
+	Type tipoEntita = (Type)info.getMapNomeTipo().get(nomeEntita);
+	EList<Field> listaAttributi =((ComplexType) tipoEntita).getAllFields();
+	List<String> listaAttrEntita = new ArrayList<String>();
+	 for(Field attr :listaAttributi) {
+		 if(attr.getType() instanceof SimpleType) {
+			listaAttrEntita.add(attr.getName());
+		 }
+	 }
+	 return listaAttrEntita;
+}
 
-	
 public static  Map<String, Type> getMapAttrByNameEntitaByInfo(String nomeEntita, WizardInfo info) {
-			
-			Type tipoEntita = (Type)info.getMapNomeTipo().get(nomeEntita);
-			
-			EList<Field> listaAttributi =((ComplexType) tipoEntita).getAllFields();
-			
-			Map <String, Type> mapListaAttrEntita = new HashMap<String, Type>();
-			
-			 for(Field attr :listaAttributi) {
-				 if(attr.getType() instanceof SimpleType) {
-					 mapListaAttrEntita.put(attr.getName(), attr.getType());
-				 }
-			 }
-			 return mapListaAttrEntita;
-		}
+	Type tipoEntita = (Type)info.getMapNomeTipo().get(nomeEntita);
+	EList<Field> listaAttributi =((ComplexType) tipoEntita).getAllFields();
+	Map <String, Type> mapListaAttrEntita = new HashMap<String, Type>();
+	 for(Field attr :listaAttributi) {
+		 if(attr.getType() instanceof SimpleType) {
+			 mapListaAttrEntita.put(attr.getName(), attr.getType());
+		 }
+	 }
+	 return mapListaAttrEntita;
+}
 
 public static  List<String> getListaAttrByNameEntitaByInfoFull(String nomeEntita, WizardInfo info) {
-	
 	Type tipoEntita = (Type)info.getMapNomeTipo().get(nomeEntita);
-	
 	EList<Field> listaAttributi =((ComplexType) tipoEntita).getAllFields();
-	
 	List<String> listaAttrEntita = new ArrayList<String>();
 	Map <String, Type> mapListaAttrEntita = new HashMap<String, Type>();
-	
 		 for(Field attr :listaAttributi) {
 			 if(attr.getType() instanceof SimpleType) {
 				listaAttrEntita.add(attr.getName());
@@ -521,28 +549,34 @@ public static  List<String> getListaAttrByNameEntitaByInfoFull(String nomeEntita
 		 return listaAttrEntita;
 }
 
-
-
 public static  void popolaListaAttrSempliciAggregati(String nomeEntita, WizardInfo info) {
 	ComplexType tipoEntita = (ComplexType)info.getMapNomeTipo().get(nomeEntita);
 	EList<Field> listaAttributi  = tipoEntita.getAllFields() ;
-	
 	List<String> listaAttrEntita = info.getListaAttrEntita();
 	Map <String, FieldContext> mapListaAttrEntita = info.getMapListaAttrEntitaContext();
-	
-	
 	Type tipoAttr = null;
 	FieldContext fieldContext = null;
-	
 		 for(Field attr :listaAttributi) {
 			 tipoAttr = attr.getType();
 			 if (tipoAttr instanceof SimpleType) {
-				
 				listaAttrEntita.add(attr.getName());
 				fieldContext = new FieldContext();
 				fieldContext.setPath(attr.getName());
 				fieldContext.setField(attr);
 				mapListaAttrEntita.put(attr.getName(), fieldContext);	 
+			 } else if(tipoAttr instanceof ComplexType && isDecodedField(attr)) {     
+				 listaAttrEntita.add(attr.getName());
+				 fieldContext = new FieldContext();
+				 fieldContext.setPath(attr.getName());
+				 fieldContext.setField(attr);
+				 mapListaAttrEntita.put(attr.getName(), fieldContext);	
+			 }
+			 else if(tipoAttr instanceof TypedArray && isDecodedField(attr)) {     
+				 listaAttrEntita.add(attr.getName());
+				 fieldContext = new FieldContext();
+				 fieldContext.setPath(attr.getName());
+				 fieldContext.setField(attr);
+				 mapListaAttrEntita.put(attr.getName(), fieldContext);	
 			 }
 		 }
 		 List<Field> aggrSemplici = getSubsectionFields(tipoEntita);
@@ -563,18 +597,20 @@ public static  void popolaListaAttrSempliciAggregatiSubFolderMod(Field field, Wi
 		 while(it.hasNext()) {
 		   Field f= it.next();
 		   if(f.getType() instanceof SimpleType) {
-			 
 			   fieldContext = new FieldContext();
 			   fieldContext.setPath(prefisso+PUNTO+f.getName());
 			   fieldContext.setField(f);
 			   info.getListaAttrEntita().add(prefisso+PUNTO+f.getName());
 			   info.getMapListaAttrEntitaContext().put(prefisso+PUNTO+f.getName(), fieldContext);
-
 		   }
 		   else if(f.getType() instanceof ComplexType && isAggregatedSimple(field)) {
 			  prefissoNomeCampo = prefisso +PUNTO+f.getName(); 
 			  popolaListaAttrSempliciAggregatiSubFolderMod(f, info, prefissoNomeCampo );
 		   }
+		   else if(f.getType() instanceof TypedArray ) {
+				  prefissoNomeCampo = prefisso +PUNTO+f.getName(); 
+				  popolaListaAttrSempliciAggregatiSubFolderMod(f, info, prefissoNomeCampo );
+			   }
 		 }
 
 }
@@ -582,7 +618,6 @@ public static  void popolaListaAttrSempliciAggregatiSubFolderMod(Field field, Wi
 // aggregato semplice: cardinalita min e max = 1
 public  static boolean isAggregatedSimple(Field attr) {
 	boolean res = false;	
-
 	EList<Annotation> listaAnnotazioni = null;
 	String source = null;
 	EList<AnnotationDetail> listaAnnotazDett = null;
@@ -597,7 +632,7 @@ public  static boolean isAggregatedSimple(Field attr) {
 						  if(source.equals(GUIGEN)) {
 							  listaAnnotazDett = annotazione.getDetails();
 							  relationType = getValueBykeyByListaAnnotationDetail(RELATION_TYPE, listaAnnotazDett);
-							  if(relationType != null && relationType.equals(AGGREGATED)) {//se la relazione � ti tipo aggregated con card=1
+							  if(relationType != null && relationType.equals(AGGREGATED)) {//se la relazione e ti tipo aggregated con card=1
 								  relationMinCard = getValueBykeyByListaAnnotationDetail(RELATION_MIN_CARDINALITY, listaAnnotazDett);
 								  relationMaxCard = getValueBykeyByListaAnnotationDetail(RELATION_MAX_CARDINALITY, listaAnnotazDett);
 								  if(relationMinCard != null && relationMaxCard != null &&
@@ -612,9 +647,107 @@ public  static boolean isAggregatedSimple(Field attr) {
 	return res;
 }
 
+//field di codifica (es. Categoria)
+public  static boolean isDecodedField(Field attr) {
+	boolean res = false;	
 
-public static FormPanel buildFpUI(ComplexType entity, List <FieldContext> listaFiltriSel, WizardInfo info, ApplicationData mainAppData, String prefisso){
+	EList<Annotation> listaAnnotazioni = null;
+	String source = null;
+	EList<AnnotationDetail> listaAnnotazDett = null;
+	String relationType = null;
 	
+				 listaAnnotazioni = attr.getAnnotations();
+				 if(listaAnnotazioni != null) {
+					 for(Annotation annotazione :listaAnnotazioni) {
+						  source = annotazione.getSource();
+						  if(source.equals(GUIGEN)) {
+							  listaAnnotazDett = annotazione.getDetails();
+							  relationType = getValueBykeyByListaAnnotationDetail(RELATION_TYPE, listaAnnotazDett);
+							  if(relationType != null && relationType.equals(DECODED)) {//se la relazione è di tipo decoded
+								    res = true;
+								 }
+							  }
+						  }
+					 }
+	return res;
+}
+
+public  static Field getCodiceField(ComplexType tipo) {
+	Field result = null;	
+	List<Field> listaAttributi= tipo.getAllFields();
+	Iterator<Field> it = listaAttributi.iterator();
+	while(it.hasNext()) {
+	   Field f= it.next();
+	   if(f.getType() instanceof SimpleType && isSingleField(f) ) {
+		  result = f;
+		  break;
+	   }	
+	 }
+	 return result;
+}
+	   
+   public  static boolean isShortDescription(Field attr) {
+	  boolean res = false;	
+	  EList<Annotation> listaAnnotazioni = null;
+	  String source = null;
+	  EList<AnnotationDetail> listaAnnotazDett = null;
+	  String singleFieldId = null;
+	
+	  listaAnnotazioni = attr.getAnnotations();
+	  if(listaAnnotazioni != null) {
+		  for(Annotation annotazione :listaAnnotazioni) {
+			  	source = annotazione.getSource();
+			  	if(source.equals(GUIGEN)) {
+			  		listaAnnotazDett = annotazione.getDetails();
+			  		singleFieldId = getValueBykeyByListaAnnotationDetail(SHORT_DESCRIPTION , listaAnnotazDett);
+			  		if(singleFieldId != null && singleFieldId.equalsIgnoreCase("true")) {
+			  			res = true;
+			  		}
+			  	}
+		  }
+	  }
+			return res;
+   }
+	  
+   public  static Field getDescrizioneField(ComplexType tipo) {
+		Field result = null;	
+		
+		List<Field> listaAttributi= tipo.getAllFields();
+		Iterator<Field> it = listaAttributi.iterator();
+		while(it.hasNext()) {
+		   Field f= it.next();
+		   if(f.getType() instanceof SimpleType && isShortDescription(f) ) {
+			  result = f;
+			  break;
+		   }	
+		 }
+		 return result;
+	}
+   
+   public  static boolean isSingleField(Field attr) {
+	   boolean res = false;	
+	   EList<Annotation> listaAnnotazioni = null;
+	   String source = null;
+	   EList<AnnotationDetail> listaAnnotazDett = null;
+	   String singleFieldId = null;
+
+	   listaAnnotazioni = attr.getAnnotations();
+	   if(listaAnnotazioni != null) {
+		   for(Annotation annotazione :listaAnnotazioni) {
+			   source = annotazione.getSource();
+			   if(source.equals(GUIGEN)) {
+				   listaAnnotazDett = annotazione.getDetails();
+				   singleFieldId = getValueBykeyByListaAnnotationDetail(SINGLE_FIELD_ID , listaAnnotazDett);
+				   if(singleFieldId != null && singleFieldId.equalsIgnoreCase("true")) {
+					   res = true;
+				   }
+			 	}
+		   }
+	   }
+			return res;
+   	}
+
+public static FormPanel buildFpUIdarimettere2911(ComplexType entity, List <FieldContext> listaFiltriSel, WizardInfo info, ApplicationData mainAppData, String prefisso){
 	FormPanel fp = null; 
 	String prefissoNomeCampo = null;
 	
@@ -649,13 +782,45 @@ public static FormPanel buildFpUI(ComplexType entity, List <FieldContext> listaF
 	return fp;
 }
 
+public static FormPanel buildFpUI(ComplexType entity, List <FieldContext> listaFiltriSel, WizardInfo info, ApplicationData mainAppData, String prefisso) {
+	FormPanel fp = null; 
+	String prefissoNomeCampo = null;
+	fp = guigenFactory.createFormPanel();
+	List<Field> foglie = getLeavesNode(entity);
+	
+	WidgetsPanel level0WP = buildWpUI(foglie, listaFiltriSel,info,  mainAppData, prefisso);
+	if(prefisso.equals("")) {
+		level0WP.setName(WP+RICERCA+upperFirstLetter(entity.getName()));
+	}
+	else {
+		level0WP.setName(WP+RICERCA+upperFirstLetter(prefisso.replace(".", "")));
+	}
+	if(!level0WP.getWidgets().isEmpty()){
+		 fp.getSubpanels().add(level0WP);
+	}
+	List<Field> subsectionFields = getSubsectionFields(entity);
+	Iterator<Field> itSubsections = subsectionFields.iterator();
+	while (itSubsections.hasNext()) {
+		Field field = itSubsections.next();
+		prefissoNomeCampo = prefisso +field.getName()+PUNTO;
+		FormPanel currSubsectionFP = buildFpUI((ComplexType)field.getType(), listaFiltriSel, info,mainAppData, prefissoNomeCampo);
+		currSubsectionFP.setName(FP+RICERCA+upperFirstLetter(prefissoNomeCampo.replace(".", "")));
+		currSubsectionFP.setLabel(splitCamelCase(prefissoNomeCampo.replace(".", "")));
+		if(!currSubsectionFP.getSubpanels().isEmpty()) {
+			VerticalFlowPanelLayout vfpUp = guigenFactory.createVerticalFlowPanelLayout();
+			currSubsectionFP.setLayout(vfpUp);
+			fp.getSubpanels().add(currSubsectionFP);
+		}
+	}
+	return fp;
+}
 
 public static WidgetsPanel buildWpUI (List<Field> fieldfoglia, List<FieldContext> listFiltriSelez, WizardInfo info, ApplicationData mainAppData, String prefisso){
 	WidgetsPanel wp = null;
 
-	 wp = guigenFactory.createWidgetsPanel();
-	 VerticalFlowPanelLayout vfplWdg = guigenFactory.createVerticalFlowPanelLayout();
-	 wp.setLayout(vfplWdg);
+	wp = guigenFactory.createWidgetsPanel();
+	VerticalFlowPanelLayout vfplWdg = guigenFactory.createVerticalFlowPanelLayout();
+	wp.setLayout(vfplWdg);
 	 
 	Iterator<Field> itFields = fieldfoglia.iterator();
 	while (itFields.hasNext()) {
@@ -669,7 +834,39 @@ public static WidgetsPanel buildWpUI (List<Field> fieldfoglia, List<FieldContext
 	return wp;
 }
 
+public static WidgetsPanel buildWidgetCodifica(Field f,  WizardInfo info, ApplicationData mainAppData, String nomeFieldNodo) {
+	SimpleType fieldType = null;
+	WidgetsPanel wp = null;
+	wp = guigenFactory.createWidgetsPanel();
+	VerticalFlowPanelLayout vfplWdg = guigenFactory.createVerticalFlowPanelLayout();
+	wp.setLayout(vfplWdg);
+	 
+	DataWidget w = null;
+	AppDataBinding appDataBinding = null; 
+	String bindingPath= "";
+	String campoFiltroNoPunto = null;
+	
+	appDataBinding = guigenFactory.createAppDataBinding();
+	appDataBinding.setAppData(mainAppData);
+	bindingPath =  nomeFieldNodo+f.getName();
+	Field codice = getCodiceField((ComplexType)f.getType());
+	appDataBinding.setPath(codice.getName()); 
+	//appDataBinding.setPath(bindingPath); 
+	campoFiltroNoPunto = bindingPath.replace(".", "");
+	
+	ComboBox combokBox = guigenFactory.createComboBox();
+	w = combokBox;
+	w.setName(COMBO_BOX+RICERCA+upperFirstLetter(campoFiltroNoPunto));
+	w.setDataType(fieldType);
+	w.setLabel(splitCamelCase(campoFiltroNoPunto));
+	w.setEnableEnrichment(true);
+	w.setDatabinding(appDataBinding);
+	wp.getWidgets().add(w);
+	   
+	return wp;
+}
 
+//per cpRicerca
 public static Widget buildWidgetUIM(Field f, List<FieldContext> listFiltriSelez, WizardInfo info, ApplicationData mainAppData, String nomeFieldNodo) {
 	SimpleType fieldType = null;
 	int stcVal = 0;
@@ -677,9 +874,12 @@ public static Widget buildWidgetUIM(Field f, List<FieldContext> listFiltriSelez,
 	AppDataBinding appDataBinding = null; 
 	String bindingPath= "";
 	String campoFiltroNoPunto = null;
+	ExecCommand execCmdFix = null;
+	String nomeEntita = info.getNomeEntita();
+	CPCommand cpCmnd = getCpCmdEnter(); 
 	
 	FieldContext fieldContext =info.getMapListaAttrEntitaContext().get(nomeFieldNodo+f.getName());
-	if(listFiltriSelez.contains(fieldContext)) {
+	if(listFiltriSelez.contains(fieldContext) && f.getType() instanceof SimpleType) {
 		 fieldType = (SimpleType)f.getType();
 		 stcVal = fieldType.getCode().getValue();
 		appDataBinding = guigenFactory.createAppDataBinding();
@@ -720,20 +920,280 @@ public static Widget buildWidgetUIM(Field f, List<FieldContext> listFiltriSelez,
 				break;
 			}
 		}
+	}
+	else if (listFiltriSelez.contains(fieldContext) && f.getType() instanceof ComplexType){        
+		//creo appdatabinding 
+		appDataBinding = guigenFactory.createAppDataBinding();
+		appDataBinding.setAppData(mainAppData);//imposto con appdatafiltro
+		bindingPath =  nomeFieldNodo+f.getName();
+		Field codice = getCodiceField((ComplexType)f.getType());
+		appDataBinding.setPath(bindingPath+"."+codice.getName()); 
 		
-}
+		campoFiltroNoPunto = bindingPath.replace(".", "");
+		ComboBox combokBox = guigenFactory.createComboBox();
+		w = combokBox;
+		combokBox.setName(COMBO_BOX+RICERCA+upperFirstLetter(campoFiltroNoPunto));
+		combokBox.setDataType(codice.getType());
+		combokBox.setKeySelector(codice.getName());
+		Field desc = getDescrizioneField((ComplexType)f.getType());
+		combokBox.setValueSelector(desc.getName());
+		
+		combokBox.setLabel(splitCamelCase(campoFiltroNoPunto));
+		combokBox.setEnableEnrichment(true);
+		
+		combokBox.setDatabinding(appDataBinding);
+		//creo appdata per listaDecodifica ovvero un vettore di oggetti di decodifica
+		ApplicationData adElencoDecodifica = guigenFactory.createApplicationData();
+		adElencoDecodifica.setName(FLT+nomeEntita+upperFirstLetter(f.getName())+ITEMS);
+		adElencoDecodifica.setLifetimeExtent(DataLifetimeType.USER_SESSION);
+		Type tipoElencoNomeEntita = getTipoArrayByNameRic(f);
+		adElencoDecodifica.setType(tipoElencoNomeEntita);
+		
+		AppDataBinding  multiAppDataBinding = guigenFactory.createAppDataBinding();
+		multiAppDataBinding.setAppData(adElencoDecodifica);
+		((MultiDataWidget) combokBox).setMultiDataBinding(multiAppDataBinding);
+		
+		getAppDataGroup().getAppData().add(adElencoDecodifica);
+	
+		EList<ContentPanel> listaCP = appModule.getContentPanels();
+		for (ContentPanel contentPanel : listaCP) {
+			contentPanel.getAppData().add(adElencoDecodifica);
+		}
+		buildMethodLoadCombo(cpCmnd,
+							 FLT,
+							 nomeEntita,
+							 adElencoDecodifica,
+							 f.getName(),
+							 upperFirstLetter(f.getName()));//tipo base
+		execCmdFix = fixComboSingleElememts(info.getNomeEntita(),  
+											 mainAppData,
+											 adElencoDecodifica,
+								             upperFirstLetter(f.getName()),
+								             codice.getName());
+		listaRicercaExecCmdFix.add(execCmdFix);
+		try {
+			Resource risorsa = getRisorsaAppdDataGroup();
+			risorsa.save(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}   
+	else if (listFiltriSelez.contains(fieldContext) && f.getType() instanceof TypedArray) {         
+		//creo appdatabinding 
+		appDataBinding = guigenFactory.createAppDataBinding();
+		ApplicationData listaCodiciSel = guigenFactory.createApplicationData();
+		listaCodiciSel.setName(FLT+nomeEntita+upperFirstLetter(f.getName())+SELECTED_KEYS);
+		listaCodiciSel.setLifetimeExtent(DataLifetimeType.USER_SESSION);
+		Type tipoString = WizardHelper.getTipoArrayString(COMMON);
+		
+		listaCodiciSel.setType(tipoString);
+		appDataBinding.setAppData(listaCodiciSel);//imposto con appdatafiltro
+		//e path nomefieldnodo.codice
+		bindingPath =  nomeFieldNodo+f.getName();
+		campoFiltroNoPunto = bindingPath.replace(".", "");
+		ComboBox combokBox = guigenFactory.createComboBox();
+		w = combokBox;
+		combokBox.setName(COMBO_BOX+RICERCA+upperFirstLetter(campoFiltroNoPunto));
+		//w.setDataType(fieldType);
+		ComplexType componentType = (ComplexType) ((TypedArray)f.getType()).getComponentType();
+		Field codice = getCodiceField(componentType);
+		combokBox.setDataType(codice.getType());
+		combokBox.setKeySelector(codice.getName());
+		Field desc = getDescrizioneField(componentType);
+		combokBox.setValueSelector(desc.getName());
+		combokBox.setLabel(splitCamelCase(campoFiltroNoPunto));
+		combokBox.setEnableEnrichment(true);
+		combokBox.setDatabinding(appDataBinding);
+		//creo appdata per listaDecodifica ovvero un vettore di oggetti di decodifica
+		ApplicationData adElencoDecodifica = guigenFactory.createApplicationData();
+		adElencoDecodifica.setName(FLT+nomeEntita+upperFirstLetter(f.getName())+ITEMS);
+		adElencoDecodifica.setLifetimeExtent(DataLifetimeType.USER_SESSION);
+		adElencoDecodifica.setType(f.getType());
+		
+		AppDataBinding  multiAppDataBinding = guigenFactory.createAppDataBinding();
+		multiAppDataBinding.setAppData(adElencoDecodifica);
+		((MultiDataWidget) combokBox).setMultiDataBinding(multiAppDataBinding);
+		
+		getAppDataGroup().getAppData().add(adElencoDecodifica);
+		getAppDataGroup().getAppData().add(listaCodiciSel);
+		
+		EList<ContentPanel> listaCP = appModule.getContentPanels();
+		for (ContentPanel contentPanel : listaCP) {
+			contentPanel.getAppData().add(adElencoDecodifica);
+			contentPanel.getAppData().add(listaCodiciSel);
+		}
+		buildMethodLoadCombo(cpCmnd,
+							 FLT,
+							 nomeEntita,
+							 adElencoDecodifica,
+							 f.getName(),
+							 componentType.getName());
+		execCmdFix = fixComboMultipleElememts( info.getNomeEntita(), 
+												appDataFiltro,
+											   adElencoDecodifica,
+											   listaCodiciSel,
+											   f.getName(),
+											 componentType.getName(),
+											codice.getName());
+		listaRicercaExecCmdFix.add(execCmdFix);
+		buildFixViewRicerca(cpCmnd,
+					 nomeEntita, 
+					 appDataFiltro, 
+				 	listaCodiciSel,
+				 	f.getName(),
+				 	componentType.getName());
+		try {
+			Resource risorsa = getRisorsaAppdDataGroup();
+			risorsa.save(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	return w;
 }
 ////////////////////////////////////////////
+public static void buildMethodLoadCombo(CPCommand cpCmnd, String dltOFlt, String nomeEntita, ApplicationData mainAppData, String nameAttr, String tipoBase) {
+	SequenceCommand seqCmd = (SequenceCommand)cpCmnd.getCommand();
+	ExecCommand execCommandLoad = guigenFactory.createExecCommand();
+	execCommandLoad.setMethodName(LOAD+upperFirstLetter(dltOFlt)+nomeEntita+upperFirstLetter(nameAttr)+ITEMS);
+	
+	CommandOutcome cmdOutOkLoad = guigenFactory.createCommandOutcome();
+	CommandOutcome cmdOutKoLoad = guigenFactory.createCommandOutcome();
+	cmdOutOkLoad.setResultCode(upperFirstLetter(LOAD)+upperFirstLetter(dltOFlt)+nomeEntita+upperFirstLetter(nameAttr)+ITEMS+"_"+OK);
+	cmdOutKoLoad.setResultCode(upperFirstLetter(LOAD)+upperFirstLetter(dltOFlt)+nomeEntita+upperFirstLetter(nameAttr)+ITEMS+"_"+KO);
+	execCommandLoad.getResults().add(cmdOutOkLoad);
+	execCommandLoad.getResults().add(cmdOutKoLoad);
+	NOPCommand nopCmdOK = guigenFactory.createNOPCommand();
+	
+	cmdOutOkLoad.setCommand(nopCmdOK);
+	NOPCommand nopCmdKO = guigenFactory.createNOPCommand();
+	cmdOutKoLoad.setCommand(nopCmdKO);
+	seqCmd.getCommands().add(execCommandLoad);
+	
+	InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
+	inlineCS.setLang("JAVA");
+	inlineCS.setSnippetName("body");
+	inlineCS.setSnippetPosition("executedMethod");
+	inlineCS.setSnippetCode(new CRUDSnippets().loadComboEntitySnippet(mainAppData, nameAttr, tipoBase).toString());
+	
+	execCommandLoad.getInlineCodeSnippets().add(inlineCS);
+}
+
+public static ExecCommand fixComboSingleElememts(String nomeEntita, ApplicationData mainAppData, ApplicationData adElenco, String tipoBase, String nomeCampoKey) {
+	ExecCommand execCommandFix = guigenFactory.createExecCommand();
+	execCommandFix.setMethodName(FIX+upperFirstLetter(mainAppData.getName())+ELEMENTS);
+	
+	CommandOutcome cmdOutOk = guigenFactory.createCommandOutcome();
+	CommandOutcome cmdOutKo = guigenFactory.createCommandOutcome();
+	cmdOutOk.setResultCode(mainAppData.getName().toUpperCase()+"_"+ELEMENTS.toUpperCase()+"_"+RESULT_CODE); 
+	cmdOutKo.setResultCode(mainAppData.getName().toUpperCase()+"_"+ELEMENTS.toUpperCase()+"_"+RESULT_CODE_KO);
+	execCommandFix.getResults().add(cmdOutOk);
+	execCommandFix.getResults().add(cmdOutKo);
+	NOPCommand nopCmdOK = guigenFactory.createNOPCommand();
+	cmdOutOk.setCommand(nopCmdOK);
+	NOPCommand nopCmdKO = guigenFactory.createNOPCommand();
+	cmdOutKo.setCommand(nopCmdKO);
+	
+	InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
+	inlineCS.setLang("JAVA");
+	inlineCS.setSnippetName("body");
+	inlineCS.setSnippetPosition("executedMethod");
+	inlineCS.setSnippetCode(new CRUDSnippets().fixComboSingleEntitySnippet(nomeEntita, mainAppData, adElenco, tipoBase, nomeCampoKey).toString());
+	
+	execCommandFix.getInlineCodeSnippets().add(inlineCS);
+	return execCommandFix;
+}
+
+public static ExecCommand fixComboMultipleElememts(String nomeEntita, ApplicationData filtroDett, ApplicationData mainAppData, ApplicationData listaCodiciSel, String nameAttr, String tipoBase, String nomeCampoKey) {
+	ExecCommand execCommandFix = guigenFactory.createExecCommand();
+	execCommandFix.setMethodName(FIX+upperFirstLetter(mainAppData.getName())+ELEMENTS);
+	
+	CommandOutcome cmdOutOk = guigenFactory.createCommandOutcome();
+	CommandOutcome cmdOutKo = guigenFactory.createCommandOutcome();
+	cmdOutOk.setResultCode(mainAppData.getName().toUpperCase()+"_"+ELEMENTS.toUpperCase()+"_"+RESULT_CODE);
+	cmdOutKo.setResultCode(mainAppData.getName().toUpperCase()+"_"+ELEMENTS.toUpperCase()+"_"+RESULT_CODE_KO);
+	execCommandFix.getResults().add(cmdOutOk);
+	execCommandFix.getResults().add(cmdOutKo);
+	NOPCommand nopCmdOK = guigenFactory.createNOPCommand();
+	cmdOutOk.setCommand(nopCmdOK);
+	NOPCommand nopCmdKO = guigenFactory.createNOPCommand();
+	cmdOutKo.setCommand(nopCmdKO);
+	
+	InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
+	inlineCS.setLang("JAVA");
+	inlineCS.setSnippetName("body");
+	inlineCS.setSnippetPosition("executedMethod");
+	inlineCS.setSnippetCode(new CRUDSnippets().fixComboMultipleEntitySnippet(nomeEntita, filtroDett, mainAppData, listaCodiciSel, nameAttr, tipoBase, nomeCampoKey).toString());
+	
+	execCommandFix.getInlineCodeSnippets().add(inlineCS);
+	return execCommandFix;
+}
+
+public static void buildFixView(CPCommand cpCmnd, String nomeEntita, ApplicationData filtroDett, ApplicationData listaCodiciSel, String nameAttr, String tipoBase) {
+	SequenceCommand seqCmd = (SequenceCommand)cpCmnd.getCommand();
+	ExecCommand execCommandFixView = guigenFactory.createExecCommand();
+	execCommandFixView.setMethodName(FIX+upperFirstLetter(filtroDett.getName())+upperFirstLetter(VIEW));
+	
+	CommandOutcome cmdOutOk = guigenFactory.createCommandOutcome();
+	CommandOutcome cmdOutKo = guigenFactory.createCommandOutcome();
+	cmdOutOk.setResultCode(FIX.toUpperCase()+filtroDett.getName().toUpperCase()+VIEW.toUpperCase()+"_"+OK);
+	cmdOutKo.setResultCode(FIX.toUpperCase()+filtroDett.getName().toUpperCase()+VIEW.toUpperCase()+"_"+KO);
+	execCommandFixView.getResults().add(cmdOutOk);
+	execCommandFixView.getResults().add(cmdOutKo);
+	NOPCommand nopCmdOK = guigenFactory.createNOPCommand();
+	
+	cmdOutOk.setCommand(nopCmdOK);
+	NOPCommand nopCmdKO = guigenFactory.createNOPCommand();
+	cmdOutKo.setCommand(nopCmdKO);
+	seqCmd.getCommands().add(execCommandFixView);
+	
+	InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
+	inlineCS.setLang("JAVA");
+	inlineCS.setSnippetName("body");
+	inlineCS.setSnippetPosition("executedMethod");
+	
+	inlineCS.setSnippetCode(new CRUDSnippets().fixViewEntitySnippet(nomeEntita, filtroDett, listaCodiciSel, nameAttr, tipoBase).toString());
+	
+	execCommandFixView.getInlineCodeSnippets().add(inlineCS);
+}
+
+public static void buildFixViewRicerca(CPCommand cpCmnd, String nomeEntita, ApplicationData filtroDett, ApplicationData listaCodiciSel, String nameAttr, String tipoBase) {
+	SequenceCommand seqCmd = (SequenceCommand)cpCmnd.getCommand();
+	ExecCommand execCommandFixView = guigenFactory.createExecCommand();
+	execCommandFixView.setMethodName(FIX+upperFirstLetter(filtroDett.getName())+upperFirstLetter(VIEW));
+	
+	CommandOutcome cmdOutOk = guigenFactory.createCommandOutcome();
+	CommandOutcome cmdOutKo = guigenFactory.createCommandOutcome();
+	cmdOutOk.setResultCode(FIX.toUpperCase()+filtroDett.getName().toUpperCase()+VIEW.toUpperCase()+"_"+OK);
+	cmdOutKo.setResultCode(FIX.toUpperCase()+filtroDett.getName().toUpperCase()+VIEW.toUpperCase()+"_"+KO);
+	execCommandFixView.getResults().add(cmdOutOk);
+	execCommandFixView.getResults().add(cmdOutKo);
+	NOPCommand nopCmdOK = guigenFactory.createNOPCommand();
+	
+	cmdOutOk.setCommand(nopCmdOK);
+	NOPCommand nopCmdKO = guigenFactory.createNOPCommand();
+	cmdOutKo.setCommand(nopCmdKO);
+	seqCmd.getCommands().add(execCommandFixView);
+	
+	InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
+	inlineCS.setLang("JAVA");
+	inlineCS.setSnippetName("body");
+	inlineCS.setSnippetPosition("executedMethod");
+	
+	inlineCS.setSnippetCode(new CRUDSnippets().fixViewRicercaEntitySnippet(nomeEntita, filtroDett, listaCodiciSel, nameAttr, tipoBase).toString());
+	
+	execCommandFixView.getInlineCodeSnippets().add(inlineCS);
+}
 
 public static FormPanel buildUI(ComplexType entity, ApplicationData mainAppData, String prefisso){
 	FormPanel fp = null; 
 	String prefissoNomeCampo = null;
-	// cstruisco il form panel vuoto
+	// costruisco il form panel vuoto
 	fp = guigenFactory.createFormPanel();
 	// costruisco il WP associato ai field foglia 
 	List<Field> foglie = getLeavesNode(entity);
-	WidgetsPanel level0WP = buildUI(foglie, mainAppData,prefisso);
+	
+	WidgetsPanel level0WP = buildUI(foglie, mainAppData,prefisso,entity.getName());
 	if(prefisso.equals("")) {
 		level0WP.setName(WP+upperFirstLetter(entity.getName()));
 	}
@@ -757,7 +1217,7 @@ public static FormPanel buildUI(ComplexType entity, ApplicationData mainAppData,
 	return fp;
 }
 
-public static WidgetsPanel buildUI (List<Field> fieldfoglia, ApplicationData mainAppData, String prefisso){
+public static WidgetsPanel buildUI (List<Field> fieldfoglia, ApplicationData mainAppData, String prefisso, String nameEntity){
 	// crea WP vuoto
 	 WidgetsPanel wp = null;
 	
@@ -770,13 +1230,13 @@ public static WidgetsPanel buildUI (List<Field> fieldfoglia, ApplicationData mai
 	while (itFields.hasNext()) {
 		Field field = itFields.next();
 	//// crea il widgetCorrispondente 
-		Widget currW = buildWidget(field, mainAppData, prefisso);
+		Widget currW = buildWidget(field, mainAppData, prefisso, nameEntity);
 		wp.getWidgets().add(currW);
 	}
 	return wp;
 }
 
-public static DataWidget buildWidget(Field f, ApplicationData mainAppData, String nomeFieldNodo){
+public static DataWidget buildWidgetdarimetter2911(Field f, ApplicationData mainAppData, String nomeFieldNodo){
 	SimpleType fieldType = (SimpleType)f.getType();
 	int stcVal = fieldType.getCode().getValue();
 	DataWidget w = null;
@@ -825,11 +1285,194 @@ public static DataWidget buildWidget(Field f, ApplicationData mainAppData, Strin
 	return w;
 }
 
+//cpDett
+public static DataWidget buildWidget(Field f, ApplicationData mainAppData, String nomeFieldNodo,  String nomeEntity){
+	SimpleType fieldType = null;
+	int stcVal = 0;
+	DataWidget w = null;
+	AppDataBinding appDataBinding = null; 
+	String bindingPath= "";
+	String campoFiltroNoPunto =null;
+	ExecCommand execCmdFix = null;
+	CPCommand cpCmndDett = getCpCmdEnterDett();
+			
+	if(f.getType() instanceof SimpleType) {
+		fieldType = (SimpleType)f.getType();
+		stcVal = fieldType.getCode().getValue();
+		
+		appDataBinding = guigenFactory.createAppDataBinding();
+		appDataBinding.setAppData(mainAppData);
+		
+		bindingPath =  nomeFieldNodo+f.getName();
+		appDataBinding.setPath(bindingPath); 
+		campoFiltroNoPunto = bindingPath.replace(".", "");
+		switch(stcVal) {
+			case SimpleTypeCodes.STRING_VALUE: 
+			case SimpleTypeCodes.INT_VALUE: {
+				w = guigenFactory.createTextField(); 
+				w.setName(TEXT_FIELD+upperFirstLetter(campoFiltroNoPunto));
+				w.setDataType(fieldType);
+				w.setLabel(splitCamelCase(campoFiltroNoPunto));
+				w.setEnableEnrichment(true);
+				w.setDatabinding(appDataBinding);
+				break;
+				}
+			case SimpleTypeCodes.BOOLEAN_VALUE: {
+				CheckBox checkBox = guigenFactory.createCheckBox();
+				w = checkBox;
+				checkBox.setName(CHECK_BOX+upperFirstLetter(campoFiltroNoPunto));
+				checkBox.setDataType(fieldType);
+				checkBox.setLabel(splitCamelCase(campoFiltroNoPunto));
+				checkBox.setEnableEnrichment(true);
+				checkBox.setDatabinding(appDataBinding);
+				break;
+			}
+			case SimpleTypeCodes.DATE_VALUE: {
+				Calendar calendar = guigenFactory.createCalendar();
+				w = calendar;
+				calendar.setName(CALENDAR+upperFirstLetter(campoFiltroNoPunto));
+				calendar.setDataType(fieldType);
+				calendar.setLabel(splitCamelCase(campoFiltroNoPunto));
+				calendar.setEnableEnrichment(true);
+				calendar.setDatabinding(appDataBinding);
+				break;
+			}
+		}
+	} else if(f.getType() instanceof ComplexType) {
+		appDataBinding = guigenFactory.createAppDataBinding();
+		appDataBinding.setAppData(mainAppData);
+		bindingPath =  nomeFieldNodo+f.getName();
+		Field codice = getCodiceField((ComplexType)f.getType());
+		appDataBinding.setPath(bindingPath+"."+codice.getName()); 
+		campoFiltroNoPunto = bindingPath.replace(".", "");
+		
+		ComboBox combokBox = guigenFactory.createComboBox();
+		w = combokBox;
+		combokBox.setName(COMBO_BOX+RICERCA+upperFirstLetter(campoFiltroNoPunto));
+		combokBox.setDataType(codice.getType());
+		combokBox.setKeySelector(codice.getName());
+		Field desc = getDescrizioneField((ComplexType)f.getType());
+		combokBox.setValueSelector(desc.getName());
+		
+		combokBox.setLabel(splitCamelCase(campoFiltroNoPunto));
+		combokBox.setEnableEnrichment(true);
+		combokBox.setDatabinding(appDataBinding);
+		//creo appdata per listaDecodifica ovvero un vettore di oggetti di decodifica
+		ApplicationData adElencoDecodifica = guigenFactory.createApplicationData();
+		adElencoDecodifica.setName(DTL+nomeEntity+upperFirstLetter(f.getName())+ITEMS);
+		adElencoDecodifica.setLifetimeExtent(DataLifetimeType.USER_SESSION);
+		Type tipoElencoNomeEntita = getTipoArrayByNameDett(f);
+		adElencoDecodifica.setType(tipoElencoNomeEntita);
+		
+		AppDataBinding  multiAppDataBinding = guigenFactory.createAppDataBinding();
+		multiAppDataBinding.setAppData(adElencoDecodifica);
+		((MultiDataWidget) combokBox).setMultiDataBinding(multiAppDataBinding);
+		
+		getAppDataGroup().getAppData().add(adElencoDecodifica);
+		
+		EList<ContentPanel> listaCP = appModule.getContentPanels();
+		for (ContentPanel contentPanel : listaCP) {
+			contentPanel.getAppData().add(adElencoDecodifica);
+		}
+		buildMethodLoadCombo(cpCmndDett,
+							 DTL,
+							 nomeEntity,
+							 adElencoDecodifica,
+							 f.getName(),
+							 upperFirstLetter(f.getName()));
+		execCmdFix = fixComboSingleElememts(nomeEntity, 
+											mainAppData,
+											adElencoDecodifica,
+								            upperFirstLetter(f.getName()),
+								            codice.getName());
+		listaDettExecCmdFix.add(execCmdFix);
+		try {
+			Resource risorsa = getRisorsaAppdDataGroup();
+			risorsa.save(null);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	} else if(f.getType() instanceof TypedArray) {
+		appDataBinding = guigenFactory.createAppDataBinding();
+		ApplicationData listaCodiciSel = guigenFactory.createApplicationData();
+		listaCodiciSel.setName(DTL+nomeEntity+upperFirstLetter(f.getName())+SELECTED_KEYS);
+		listaCodiciSel.setLifetimeExtent(DataLifetimeType.USER_SESSION);
+		Type tipoString = WizardHelper.getTipoArrayString(COMMON);
+		
+		listaCodiciSel.setType(tipoString);
+		appDataBinding.setAppData(listaCodiciSel);//imposto con appdatafiltro
+		
+		bindingPath =  nomeFieldNodo+f.getName();
+		campoFiltroNoPunto = bindingPath.replace(".", "");
+		
+		ComboBox combokBox = guigenFactory.createComboBox();
+		w = combokBox;
+		combokBox.setName(COMBO_BOX+RICERCA+upperFirstLetter(campoFiltroNoPunto));
+		combokBox.setDataType(fieldType);
+		ComplexType componentType = (ComplexType) ((TypedArray)f.getType()).getComponentType();
+		Field codice = getCodiceField(componentType);
+		combokBox.setDataType(codice.getType());
+		combokBox.setKeySelector(codice.getName());
+		Field desc = getDescrizioneField(componentType);
+		combokBox.setValueSelector(desc.getName());
+	
+		combokBox.setLabel(splitCamelCase(campoFiltroNoPunto));
+		combokBox.setEnableEnrichment(true);
+		combokBox.setDatabinding(appDataBinding);
+		
+		//creo appdata per listaDecodifica ovvero un vettore di oggetti di decodifica
+		ApplicationData adElencoDecodifica = guigenFactory.createApplicationData();
+		adElencoDecodifica.setName(DTL+nomeEntity+upperFirstLetter(f.getName())+ITEMS);
+		adElencoDecodifica.setLifetimeExtent(DataLifetimeType.USER_SESSION);
+		adElencoDecodifica.setType(f.getType());
+		AppDataBinding  multiAppDataBinding = guigenFactory.createAppDataBinding();
+		multiAppDataBinding.setAppData(adElencoDecodifica);
+		((MultiDataWidget) combokBox).setMultiDataBinding(multiAppDataBinding);
+		
+		getAppDataGroup().getAppData().add(adElencoDecodifica);
+		getAppDataGroup().getAppData().add(listaCodiciSel);
+		
+		EList<ContentPanel> listaCP = appModule.getContentPanels();
+		for (ContentPanel contentPanel : listaCP) {
+			contentPanel.getAppData().add(adElencoDecodifica);
+			contentPanel.getAppData().add(listaCodiciSel);
+		}
+		buildMethodLoadCombo(cpCmndDett,
+							 DTL,
+							 nomeEntity,
+							 adElencoDecodifica, 
+							 f.getName(),
+							 componentType.getName());
+		execCmdFix = fixComboMultipleElememts( nomeEntity, 
+												appDataDett, 
+												adElencoDecodifica,
+												listaCodiciSel,
+												f.getName(),
+				 								componentType.getName(),
+				 								codice.getName());
+		listaDettExecCmdFix.add(execCmdFix);
+		buildFixView(cpCmndDett,
+					 nomeEntity, 
+					 appDataDett, 
+					 listaCodiciSel,
+					 f.getName(),
+					 componentType.getName());
+		try {
+			Resource risorsa = getRisorsaAppdDataGroup();
+			risorsa.save(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	return w;
+}
+
 public static List<Field> getSubsectionFields(ComplexType tipo){
 	 EList<Field> listaAttrEntita  = tipo.getAllFields() ;
 	 List<Field> listaSubsectionField = new ArrayList<Field>();
 	 for (Field field : listaAttrEntita) {
-		 if(field.getType() instanceof ComplexType && isAggregatedSimple(field)) {
+	 if(field.getType() instanceof ComplexType && isAggregatedSimple(field)) { 
 			 listaSubsectionField.add(field);
 		 }
 	}
@@ -849,7 +1492,6 @@ public static int getNumeroFormPanel(ComplexType entity){
 }
 
 public static List<Field> getLeavesNode(ComplexType tipo) {
-	
 	List<Field> listaFoglie = new ArrayList<Field>();
 	if(tipo != null) {
 		EList<Field> children = tipo.getAllFields();
@@ -860,6 +1502,10 @@ public static List<Field> getLeavesNode(ComplexType tipo) {
 		    while(iter.hasNext()) {
 			     attr = (Field)iter.next();
 			     if(attr.getType() instanceof SimpleType) {
+			    	 listaFoglie.add(attr);
+			     } else if(attr.getType() instanceof ComplexType && isDecodedField(attr)) {
+			    	 listaFoglie.add(attr);
+			     } else if(attr.getType() instanceof TypedArray && isDecodedField(attr)) {
 			    	 listaFoglie.add(attr);
 			     }
 		    }
@@ -883,7 +1529,6 @@ public static FormPanel creaFPDett(String nomeForm, UDLRCSpecConstants udlrSpecC
 }
 
 public static FormPanel creaFPPrincipaleDett(WizardInfo info) {
-	
 	FormPanel fp = guigenFactory.createFormPanel();
 	 
 	 fp.setName(FP+upperFirstLetter(DETTAGLIO)+info.getNomeEntita());
@@ -930,7 +1575,6 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 		}
 		
 		public static Map<String, Type> getMappaAttributi(EList<Field> listaAttributi) {
-			
 			Map <String, Type> mapListaAttrEntita = new HashMap<String, Type>();
 		
 		  			 for(Field attr :listaAttributi) {
@@ -939,11 +1583,6 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 		  				 }
 		  			 }
 		  			 return mapListaAttrEntita;
-		}
-
-		public static void setIdPkByName(String item) {
-			
-			
 		}
 
 		public static String[] creaListaFiltri( String[] listaAttrSel) {
@@ -987,7 +1626,6 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 			info.getMapListaAttrEntita().clear();
 		}
 		
-		
 		public static void creaAppMod(String nomeEntita) throws IOException {
 			AppModule nuovoAppMod = null;
 			Map<Object, Object> options = new HashMap<Object, Object>();
@@ -1007,12 +1645,11 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 			guiModel.getStructure().getAppWindow().getAppArea().getExtModules().add(nuovoAppMod);
 			resourceAppModule.getContents().add(nuovoAppMod);
 			
-			setAppModule(nuovoAppMod);//9-10-2012
+			setAppModule(nuovoAppMod);
 			setResourceAppMod(resourceAppModule);
 			
 			resourceAppModule.save(options);
 			WizardHelper.modPrincResource.save(options);
-			
 		}
 		
 		public static void creaAppDataGroup(String nomeEntita, WizardInfo info) throws IOException {
@@ -1025,16 +1662,14 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				uri = file.getParent().toString().substring(1)+"/"+ FOLDER_NAME_MOD_SEC + "/" + lowerNomeEntita+ "/" + lowerNomeEntita+APPDATA+EXT_FILE;
 				
 				URI appDataGroupFileURI = URI.createPlatformResourceURI(uri, true);
-				
 				Resource appDataResource = resourceSet.createResource(appDataGroupFileURI);
-				
 				//creo l'App Data Group
 				AppDataGroup appDataGroup = guigenFactory.createAppDataGroup();
 				appDataGroup.setName(lowerNomeEntita+APPDATA);
-				 
-				//creo appdata per il filtro dell'entit�
+				setAppDataGroup(appDataGroup);
+				//creo appdata per il filtro dell'entita
 				ApplicationData adf = guigenFactory.createApplicationData();
-				adf.setName(FILTRO+nomeEntita);
+				adf.setName(FLT+nomeEntita);
 				adf.setLifetimeExtent(DataLifetimeType.USER_SESSION);
 				Type tipoEntita = getTipoByNameEntita(nomeEntita, info);
 				adf.setType(tipoEntita);
@@ -1045,50 +1680,37 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				//creo appdata per la PK
 				ApplicationData adPK = guigenFactory.createApplicationData();
 				adPK.setLifetimeExtent(DataLifetimeType.USER_SESSION);
-				//adPK.setName(info.getIdPrimaryKey());
 				adPK.setName(ID+SELEZIONATO+nomeEntita);
 				//recupero il tipo della PK
-				//Type tipoPK = WizardHelper.getTypeByAttrName(info.getIdPrimaryKey(), info);//modifico 6-11
 				Type tipoPK = WizardHelper.getTypeByAttrNameField(info.getIdPrimaryKey(), info);
 				adPK.setType(tipoPK);
 				//imposto la variabile dell'helper
 				appDataPK = adPK;
 				//lo aggiungo all'appdata group
 				appDataGroup.getAppData().add(adPK);
-				
-				//14-11 creo appDataMethod
+				//creo appDataMethod
 				ApplicationData apdMethod = guigenFactory.createApplicationData();
-				apdMethod.setLifetimeExtent(DataLifetimeType.USER_SESSION);  //16-11-2012s
+				apdMethod.setLifetimeExtent(DataLifetimeType.USER_SESSION);  
 				apdMethod.setName(WizardHelper.lowerFirstLetter(nomeEntita)+CRUD_OPERATION);
 				Type tipoString = WizardHelper.getTipoPrimitivo(COMMON, STRING);
 				apdMethod.setType(tipoString);
-				//apdMethod.setType(tipoPK);
 				appDataMethod = apdMethod;
 				appDataGroup.getAppData().add(apdMethod);
-				//14-11 end appDataMethod
-				
 				//creo appdata per dettaglio
 				ApplicationData adDett = guigenFactory.createApplicationData();
-				adDett.setName(DETTAGLIO+nomeEntita);
+				adDett.setName(DTL+nomeEntita);
 				adDett.setLifetimeExtent(DataLifetimeType.USER_SESSION);
 				adDett.setType(tipoEntita);
 				//setto la varibile di Helper
 				appDataDett = adDett;
 				//lo aggiungo all'appdata group
 				appDataGroup.getAppData().add(adDett);
-				
-				//creo appdata per elencoNomeEntit� ovvero un vettore dell'entit�
+				//creo appdata per elencoNomeEntita ovvero un vettore dell'entita'
 				ApplicationData adElencoNomeEntita = guigenFactory.createApplicationData();
 				adElencoNomeEntita.setName(ELENCO+nomeEntita);
 				adElencoNomeEntita.setLifetimeExtent(DataLifetimeType.USER_SESSION);
-				//per definire il tipo devo costruire un vettore di oggetti di tipo nomeEntita NO DEVO RECUPERARLO
-	//			TypedArray tipoElencoNomeEntita = guigenFactory.createTypedArray();
-	//			tipoElencoNomeEntita.setName(ELENCO+nomeEntita+PARENTESI_QUADRE);
-	//			tipoElencoNomeEntita.setComponentType(tipoEntita);
-				//comentato 12-10 Type tipoElencoNomeEntita = getTipoArrayByName2(nomeEntita);
-				//12-10-2012
+
 				Type tipoElencoNomeEntita = getTipoArrayByName(nomeEntita, info);
-				
 				adElencoNomeEntita.setType(tipoElencoNomeEntita);
 				//setto la variabile di Helper
 				appDataElencoEntita = adElencoNomeEntita;
@@ -1099,10 +1721,8 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				appDataResource.getContents().add(appDataGroup);
 				
 				setRisorsaAppdDataGroup(appDataResource);
-				
 				appDataResource.save(options);
 				modPrincResource.save(options);
-				
 				} catch (Exception e) {
 					e.printStackTrace();
 			}
@@ -1114,16 +1734,15 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 			return tipoAttr;
 		}
 	
-		
 		public static Type getTypeByAttrNameField(String nomeAttributo, WizardInfo info)  {//14-11 ho tolto throws IOException
 			 Map<String, FieldContext> mapListaAttrEntita = info.getMapListaAttrEntitaContext();
 			 FieldContext fieldContext =  mapListaAttrEntita.get(nomeAttributo);
 			return fieldContext.getField().getType();
 		}
 		
-
 		public  void creaCPRicercaByAppModule(WizardInfo info) throws IOException { 
 			try {
+			
 			 Map<Object, Object> options = new HashMap<Object, Object>();
 			
 			 String nomeEntita = info.getNomeEntita();
@@ -1137,8 +1756,39 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 			 cp.getAppData().add(appDataPK);
 			 cp.getAppData().add(appDataDett);
 			 cp.getAppData().add(appDataElencoEntita);
-			 cp.getAppData().add(appDataMethod);//14-11
+			 cp.getAppData().add(appDataMethod);
 			 
+			 appModule.getContentPanels().add(cp);
+			 cpDettaglio = guigenFactory.createContentPanel();
+			 appModule.getContentPanels().add(cpDettaglio);
+			 multiPanelRicerca = guigenFactory.createMultiPanel();
+			
+			 CPCommands cpCmds = guigenFactory.createCPCommands();
+			 CPCommand cpCmdEnter = guigenFactory.createCPCommand();
+			 setCpCmdEnter(cpCmdEnter);
+			 cpCmdEnter.setExecute(CPCommandExecutionTypes.ON_ENTER);
+			 cpCmds.getCommands().add(cpCmdEnter);
+			 
+			 cp.setCpCommands(cpCmds);//aggancio al content panel di ricerca
+			 
+			 SequenceCommand seqCmdCPEnter = guigenFactory.createSequenceCommand();
+			 
+			 cpCmdEnter.setCommand(seqCmdCPEnter);
+			 
+			 ClearAppdataCommand clearAppdata = guigenFactory.createClearAppdataCommand();
+			 clearAppdata.getAppData().add(appDataFiltro);
+			 clearAppdata.getAppData().add(appDataPK);
+			 clearAppdata.getAppData().add(appDataElencoEntita);
+			 clearAppdata.getAppData().add(appDataDett);
+			 
+			 seqCmdCPEnter.getCommands().add(clearAppdata);
+				
+			 ActivateMultiPanelItemCommand activeMPanelItemCmdcopy = guigenFactory.createActivateMultiPanelItemCommand();
+			 activeMPanelItemCmdcopy.setActiveItem(null);
+			 activeMPanelItemCmdcopy.setMultipanel(getMultiPanelRicerca());
+		    
+			 seqCmdCPEnter.getCommands().add(activeMPanelItemCmdcopy);
+			
 			 fp.setName(FP+RICERCA+nomeEntita);
 			 fp.setLabel(RICERCA+ " "+nomeEntita);
 			 
@@ -1150,9 +1800,9 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 			 String[] campiFiltri = getListaFiltri();//costituita da tipi semplici
 			 		
 			 ComplexType tipoEntita = (ComplexType)info.getMapNomeTipo().get(info.getNomeEntita());
-
-			 List<FieldContext> listaFiltriSel = WizardHelper.findListFieldFilter(campiFiltri, info);
 			 
+			 List<FieldContext> listaFiltriSel = WizardHelper.findListFieldFilter(campiFiltri, info);
+			 			 
 			 FormPanel fpCenter = buildFpUI(tipoEntita, listaFiltriSel, info, appDataFiltro, "");
 			 fpCenter.setName(FP+CENTER);
 			 VerticalFlowPanelLayout vfpUp = guigenFactory.createVerticalFlowPanelLayout();
@@ -1181,34 +1831,6 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 			  * 3 CmdPanel
 			 	4 MultiPanel  4
 			 */
-			 CPCommands cpCmds = guigenFactory.createCPCommands();
-			 CPCommand cpCmdEnter = guigenFactory.createCPCommand();
-			 cpCmdEnter.setExecute(CPCommandExecutionTypes.ON_ENTER);
-			 cpCmds.getCommands().add(cpCmdEnter);
-			 
-			 cp.setCpCommands(cpCmds);//aggancio al content panel di ricerca
-			 
-			 SequenceCommand seqCmdCPEnter = guigenFactory.createSequenceCommand();
-			 
-			 cpCmdEnter.setCommand(seqCmdCPEnter);
-			 
-			 ClearAppdataCommand clearAppdata = guigenFactory.createClearAppdataCommand();
-			 clearAppdata.getAppData().add(appDataFiltro);
-			 clearAppdata.getAppData().add(appDataPK);
-			 clearAppdata.getAppData().add(appDataElencoEntita);
-			 clearAppdata.getAppData().add(appDataDett);
-			 
-			 seqCmdCPEnter.getCommands().add(clearAppdata);
-				
-			 ActivateMultiPanelItemCommand activeMPanelItemCmdcopy = guigenFactory.createActivateMultiPanelItemCommand();
-			 activeMPanelItemCmdcopy.setActiveItem(null);
-			 activeMPanelItemCmdcopy.setMultipanel(getMultiPanelRicerca());
-		    
-			 seqCmdCPEnter.getCommands().add(activeMPanelItemCmdcopy);
-			
-			 appModule.getContentPanels().add(cp);
-			 appModule.getContentPanels().add(cpDettaglio);
-			 
 			 resourceAppMod.save(options);
 			 modPrincResource.save(options);
 			
@@ -1229,11 +1851,16 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 		return listaFiltri;	
 		}
 		
-		
-		public  static ContentPanel creaCPDettaglioByAppModule( WizardInfo info, ContentPanel cpRicerca) throws IOException {//7-11 elimino che � statico 
-			
-				cpDettaglio = guigenFactory.createContentPanel();
-				 
+		public  static ContentPanel creaCPDettaglioByAppModule( WizardInfo info, ContentPanel cpRicerca) throws IOException { 
+				CPCommands cpCmds = guigenFactory.createCPCommands();
+				CPCommand cpCmdEnterDett = guigenFactory.createCPCommand();
+				setCpCmdEnterDett(cpCmdEnterDett);
+				cpCmdEnterDett.setExecute(CPCommandExecutionTypes.ON_ENTER);
+				cpCmds.getCommands().add(cpCmdEnterDett);
+				cpDettaglio.setCpCommands(cpCmds);//aggancio al content panel di dettaglio
+				SequenceCommand seqCmdCPEnterDett = guigenFactory.createSequenceCommand();
+				cpCmdEnterDett.setCommand(seqCmdCPEnterDett);
+				
 				 FormPanel fp = guigenFactory.createFormPanel();
 				 
 				 cpDettaglio.setName(CP+upperFirstLetter(DETTAGLIO)+info.getNomeEntita());
@@ -1294,21 +1921,26 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				 Button btSalva = guigenFactory.createButton();
 				 btSalva.setName(BT+SALVA);
 				 btSalva.setLabel(SALVA);
-				 
 				 btSalva.setFunctionSpecifier(CommandFunctions.SAVE);
 				 
 				 EventHandler evHandlerSalva = guigenFactory.createEventHandler();
 				 evHandlerSalva.setEventType(EventTypes.CLICKED);
 				 btSalva.getEventHandlers().add(evHandlerSalva);
-
+				 SequenceCommand seqCmdSalvaRoot = guigenFactory.createSequenceCommand(); 
+				 evHandlerSalva.setCommand(seqCmdSalvaRoot);
+				 
+				 for(ExecCommand execCmdFix :listaDettExecCmdFix) {
+					 seqCmdSalvaRoot.getCommands().add(execCmdFix); 
+				 }
 				 ExecCommand execCommandSalva = guigenFactory.createExecCommand();
 				 execCommandSalva.setMethodName(lowerFirstLetter(SALVA)+info.getNomeEntita());
+				 seqCmdSalvaRoot.getCommands().add(execCommandSalva); 
 				 
 				 InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
 				 inlineCS.setLang("JAVA");
 				 inlineCS.setSnippetName("body");
 				 inlineCS.setSnippetPosition("executedMethod");
-				 inlineCS.setSnippetCode(new CRUDSnippets().salvaEntitySnippet(info.getNomeEntita(), appDataMethod.getName(), appDataDett.getName()).toString());
+				 inlineCS.setSnippetCode(new CRUDSnippets().salvaEntitySnippet(info.getNomeEntita(), appDataMethod.getName(), appDataDett.getName()).toString());//6-12-2012
 				 
 				 execCommandSalva.getInlineCodeSnippets().add(inlineCS);
 				 
@@ -1316,8 +1948,7 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				 cmdOutOkSalva.setResultCode(RESULT_CODE);
 				 
 				 execCommandSalva.getResults().add(cmdOutOkSalva);
-				 evHandlerSalva.setCommand(execCommandSalva);
-				 
+				
 				 RefreshViewCommand refreshVCmdOkSalva = guigenFactory.createRefreshViewCommand();
 				 cmdOutOkSalva.setCommand(refreshVCmdOkSalva);
 				 refreshVCmdOkSalva.getTargetWidgets().add(btSalva);
@@ -1353,16 +1984,12 @@ public static String getValueBykeyByListaAnnotationDetail (String key, EList<Ann
 				 fp.getSubpanels().add(fpUp);
 				 fp.getSubpanels().add(fpCenter);
 				 fp.getSubpanels().add(fpLeft);
-		
 			return cpDettaglio;
 		}
 
-
 public static  Type getTipoArrayByName2(String nomeEntita)  {
-	
 	Typedefs tipi = guiModel.getTypedefs();
 	Type res = null;
-	
 	EList<Type> listaTipi;
 	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
 	
@@ -1379,16 +2006,13 @@ public static  Type getTipoArrayByName2(String nomeEntita)  {
 	return res;
 }
 
-
 public static  Type getTipoArrayByName(String nomeEntita, WizardInfo info)  {
-	
 	Typedefs tipi = guiModel.getTypedefs();
 	Type res = null;
-	
 	EList<Type> listaTipi;
 	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
 	//recupero il tipo dell'entita
-	//� di tipo complesso recupero il padre che mi d� il namespace da cui recupero il nome del TNS
+	//e di tipo complesso recupero il padre che mi d il namespace da cui recupero il nome del TNS
 	Type tipoEntita = getTipoByNameEntita(nomeEntita, info);
 	String tnsSource = null;
 	if(tipoEntita instanceof ComplexType) {
@@ -1398,11 +2022,12 @@ public static  Type getTipoArrayByName(String nomeEntita, WizardInfo info)  {
 	for (TypeNamespace namespace : listaNamespace) {
 		//se il namespace che scorro (for) ha quel nome
 		if(namespace.getName().equals(tnsSource)) {
-			//l� far� la mia ricerca: recupero lista tipi e cercher� quello con component type =nome entit�.
+			//l far  la mia ricerca: recupero lista tipi e cercher quello con component type =nome entit.
 			listaTipi = namespace.getTypes();
 		  	for(Type tipo : listaTipi) {
 		  		if(tipo instanceof TypedArray && ((TypedArray) tipo).getComponentType().getName().equals(nomeEntita)) {
 		  			res = tipo;
+		  			break;
 		  		}
 		  	}
 	  	}
@@ -1410,6 +2035,64 @@ public static  Type getTipoArrayByName(String nomeEntita, WizardInfo info)  {
 	return res;
 }
 
+public static  Type getTipoArrayByNameDett(Field nomeEntita)  {
+	Typedefs tipi = guiModel.getTypedefs();
+	Type res = null;
+	EList<Type> listaTipi;
+	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
+	//recupero il tipo dell'entita
+	// di tipo complesso recupero il padre che mi d il namespace da cui recupero il nome del TNS
+	Type tipoEntita = nomeEntita.getType();
+	String tnsSource = null;
+	if(tipoEntita instanceof ComplexType || tipoEntita instanceof TypedArray) {//TypedArray
+			TypeNamespace padre = (TypeNamespace)tipoEntita.eContainer();
+			tnsSource = padre.getName();
+	}
+	for (TypeNamespace namespace : listaNamespace) {
+		//se il namespace che scorro (for) ha quel nome
+		if(namespace.getName().equals(tnsSource)) {
+			//l faro la mia ricerca: recupero lista tipi e cercher quello con component type =nome entit.
+			listaTipi = namespace.getTypes();
+		  	for(Type tipo : listaTipi) {
+		  		if(tipo instanceof TypedArray && ((TypedArray) tipo).getComponentType().getName().equals(upperFirstLetter(nomeEntita.getName()))) {
+		  		 if(tipo instanceof TypedArray ) {
+		  			res = tipo;
+		  			break;
+		  		 }
+		  		}
+		  	}
+		}
+	}
+	return res;
+}
+
+public static  Type getTipoArrayByNameRic(Field f)  {
+	Typedefs tipi = guiModel.getTypedefs();
+	Type res = null;
+	
+	EList<Type> listaTipi;
+	EList<TypeNamespace> listaNamespace = tipi.getExtNamespaces();
+	//recupero il tipo dell'entita
+	Type tipoEntita = f.getType();
+	String tnsSource = null;
+	if(tipoEntita instanceof ComplexType) {
+			TypeNamespace padre = (TypeNamespace)tipoEntita.eContainer();
+			tnsSource = padre.getName();
+	}
+	for (TypeNamespace namespace : listaNamespace) {
+		//se il namespace che scorro (for) ha quel nome
+		if(namespace.getName().equals(tnsSource)) {
+			listaTipi = namespace.getTypes();
+		  	for(Type tipo : listaTipi) {
+		  		if(tipo instanceof TypedArray && ((TypedArray) tipo).getComponentType().getName().equals(tipoEntita.getName())){
+		  			res = tipo;
+		  			break;
+		  		 }
+		  	}
+		}
+	}
+	return res;
+}
 
 public static  Type getTipoPrimitivo(String nomeNamespace, String nomePrimitivo)  {
 	Type res = null;
@@ -1425,7 +2108,6 @@ public static  Type getTipoPrimitivo(String nomeNamespace, String nomePrimitivo)
 	return res;
 }
 
-
 public static  TypeNamespace findNamespace(String nomeNamespace)  {
 	Typedefs tipi = guiModel.getTypedefs();
 	TypeNamespace res = null;
@@ -1439,6 +2121,21 @@ public static  TypeNamespace findNamespace(String nomeNamespace)  {
 	return res;
 }
 
+public static Type getTipoArrayString(String nomeNamespace) {
+	
+	Type res = null;
+	EList<Type> listaTipi = null;
+	TypeNamespace namespace = findNamespace(nomeNamespace);
+	listaTipi = namespace.getTypes();
+	for(Type tipo : listaTipi) {
+		
+  		if(tipo instanceof TypedArray && ((TypedArray)tipo).getComponentType().getName().equals(STRING)){
+  			res = tipo;
+  			break;
+  		}
+	}
+	return res;
+}
 
 static private List<Integer> findIndex(String word) {
 	List<Integer> idxList = new ArrayList();
@@ -1498,7 +2195,6 @@ public static  String lowerFirstLetter(String word)  {
 		}
 			res.append(word.substring(0,1).toLowerCase()+word.substring(1, word.length()));
 	}
-	
 	return res.toString();
 }
 
@@ -1514,7 +2210,6 @@ public static  ContentPanel findContentPanelByName(String namePanel)  {
 }
 
 public static FormPanel  creaFormPanelUp()  {
-	
 	FormPanel fpUp = guigenFactory.createFormPanel();
 	fpUp.setName(FP+UP);
 	VerticalFlowPanelLayout vfpUp = guigenFactory.createVerticalFlowPanelLayout();
@@ -1525,8 +2220,8 @@ public static FormPanel  creaFormPanelUp()  {
 	fpUp.setLayoutSpec(udlrcWdgUp);
 	return fpUp;
 }
+
 public static FormPanel  creaFormPanelCenter()  {
-	
 	FormPanel fpCenter = guigenFactory.createFormPanel();
 	fpCenter.setName(FP+CENTER);
 	
@@ -1540,7 +2235,6 @@ public static FormPanel  creaFormPanelCenter()  {
 }
 
 public static FormPanel  creaFormPanelLeft()  {
-	
 		FormPanel fpLeft = guigenFactory.createFormPanel();
 		fpLeft.setName("fpLeft");
 		
@@ -1553,8 +2247,6 @@ public static FormPanel  creaFormPanelLeft()  {
 		return fpLeft;
 }
 
-
-
 public static StdMessagePanel  creaStdMsgPanelRicerca(WizardInfo info, boolean glbMsg, boolean errors, boolean errorDetails) {
 	
 		StdMessagePanel stdMsgPanel = guigenFactory.createStdMessagePanel();
@@ -1566,8 +2258,7 @@ public static StdMessagePanel  creaStdMsgPanelRicerca(WizardInfo info, boolean g
 }
 
 public static StdMessagePanel  creaStdMsgPanelDettaglio(WizardInfo info, boolean glbMsg, boolean errors, boolean errorDetails) {
-	
-	StdMessagePanel stdMsgPanelDett = guigenFactory.createStdMessagePanel();
+	 StdMessagePanel stdMsgPanelDett = guigenFactory.createStdMessagePanel();
 	 stdMsgPanelDett.setName(STANDARD_MSG+upperFirstLetter(DETTAGLIO)+info.getNomeEntita());
 	 stdMsgPanelDett.setShowFieldErrorDetails(true);
 	 stdMsgPanelDett.setShowFieldErrors(true);
@@ -1576,7 +2267,6 @@ public static StdMessagePanel  creaStdMsgPanelDettaglio(WizardInfo info, boolean
 }
 
 public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, ContentPanel cp) throws IOException{//7-11 era statico 
-	
 	 String nomeEntita= info.getNomeEntita();
 	 
 	 CommandPanel cmdPanel = guigenFactory.createCommandPanel();
@@ -1586,11 +2276,18 @@ public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, C
 	 cmdPanel.setLayout(hfpl);
 	 
 	 Button btRicerca = creaBottone(info, RICERCA, cmdPanel, CommandFunctions.SEARCH);
-
+	 
 	 EventHandler evHandlerRicerca = creaEventoHandlerBottone(btRicerca);
-
+	 
+	 SequenceCommand seqCmdRicercaRoot = guigenFactory.createSequenceCommand(); 
+	 evHandlerRicerca.setCommand(seqCmdRicercaRoot);
+	 
+	 for(ExecCommand execCmdFix :listaRicercaExecCmdFix) {
+		 seqCmdRicercaRoot.getCommands().add(execCmdFix); 
+	 }
 	 ExecCommand execCommandRicerca = guigenFactory.createExecCommand();
 	 execCommandRicerca.setMethodName(lowerFirstLetter(RICERCA)+nomeEntita);
+	 seqCmdRicercaRoot.getCommands().add(execCommandRicerca); 
 	 
 	 InlineCodeSnippet inlineCS = guigenFactory.createInlineCodeSnippet();
 	 inlineCS.setLang("JAVA");
@@ -1603,7 +2300,6 @@ public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, C
 	 CommandOutcome cmdOutOkRic = guigenFactory.createCommandOutcome();
 	 cmdOutOkRic.setResultCode(RESULT_CODE);
 	 
-	 evHandlerRicerca.setCommand(execCommandRicerca);//
 	 execCommandRicerca.getResults().add(cmdOutOkRic);
 	 
 	 CommandOutcome cmdOutKoRic = guigenFactory.createCommandOutcome();
@@ -1630,7 +2326,10 @@ public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, C
 	 ActivateMultiPanelItemCommand activeMPanelItemCmd = guigenFactory.createActivateMultiPanelItemCommand();
 	 ActivateMultiPanelItemCommand activeMPanelItemCmdKo = guigenFactory.createActivateMultiPanelItemCommand();
 	 //creo il multiPanel di ricerca
-	 MultiPanel mpRicerca = creaMultiPanelRicerca(info); 
+	 multiPanelRicerca.setName(MULTI_PANEL+upperFirstLetter(ELENCO)+info.getNomeEntita());
+	 multiPanelRicerca.setLabel(ELENCO+info.getNomeEntita());
+	
+	 MultiPanel mpRicerca = multiPanelRicerca;
 	 setMultiPanelRicerca(mpRicerca);
 	 
 	 fpCenter.getSubpanels().add(mpRicerca);
@@ -1662,7 +2361,8 @@ public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, C
 	 inlineInsertCS.setLang("JAVA");
 	 inlineInsertCS.setSnippetName("body");
 	 inlineInsertCS.setSnippetPosition("executedMethod");
-	 inlineInsertCS.setSnippetCode(new CRUDSnippets().insertEntitySnippet(nomeEntita, appDataMethod.getName()).toString());
+
+	 inlineInsertCS.setSnippetCode(new CRUDSnippets().insertEntitySnippet(nomeEntita, appDataMethod.getName(), appDataDett).toString());
 	 execCommandInsert.getInlineCodeSnippets().add(inlineInsertCS);
 	 
 	 CommandOutcome cmdOutViewDetail = guigenFactory.createCommandOutcome();
@@ -1675,7 +2375,7 @@ public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, C
 	 cmdOutViewDetail.setCommand(jCmdFromInsertToDett);
 	 
 	 cpDettaglio = creaCPDettaglioByAppModule(info, cp);
-	 
+	 setCpDettaglio(cpDettaglio); 
 	 jCmdFromInsertToDett.setJumpTo(cpDettaglio);
 	
 	 creaCmdPanelTabellaEntita(info, fpMultiPanelTab, fpCenter);
@@ -1683,9 +2383,7 @@ public  CommandPanel  creaCmdPanelRicerca(WizardInfo info, FormPanel fpCenter, C
 	 return cmdPanel;
 }
 
-
 public static void  creaTabellaEntita(WizardInfo info, FormPanel fpMultiPanelTab ) throws IOException {
-	
 	 String nomeEntita = info.getNomeEntita();
 	
 	 VerticalFlowPanelLayout vfpl = guigenFactory.createVerticalFlowPanelLayout();
@@ -1738,16 +2436,14 @@ public static FormPanel creaFormMPTab(WizardInfo info) {
 	return fpMultiPanelTab;
 }
 
-
 public MultiPanel creaMultiPanelRicerca(WizardInfo info) {
-	if(multiPanelRicerca == null ) {
-		multiPanelRicerca = guigenFactory.createMultiPanel();
+	//4-12-2012 if(multiPanelRicerca == null ) {
+	//	multiPanelRicerca = guigenFactory.createMultiPanel();
 		multiPanelRicerca.setName(MULTI_PANEL+upperFirstLetter(ELENCO)+info.getNomeEntita());
 		multiPanelRicerca.setLabel(ELENCO+info.getNomeEntita());
-	}
+	//4-12-2012}
 	return multiPanelRicerca;
 }
-
 
 public static void creaCmdPanelTabellaEntita( WizardInfo info, FormPanel fpMultiPanelTab, FormPanel fpCenter) {
 	 String nomeEntita = info.getNomeEntita();
@@ -1852,7 +2548,6 @@ public static void creaCmdPanelTabellaEntita( WizardInfo info, FormPanel fpMulti
 	 refreshVCDett.getTargetPanels().add(fpCenter.getSubpanels().get(0)); 
 }
 
-
 public static Button creaBottone(WizardInfo info, String nomeBottone, CommandPanel cmdPanel,  CommandFunctions cmdFunction)  {
 	 Button btRicerca = guigenFactory.createButton();
 	 btRicerca.setName(BT+nomeBottone);
@@ -1872,6 +2567,18 @@ public static EventHandler creaEventoHandlerBottone(Button button) {
 	 
 	return  evHandler;
 }
-		
+
+public static EventHandler findEvent(Widget w, EventTypes typeEvent) {
+	EventHandler res = null;
+	Iterator<EventHandler> eventIter = w.getEventHandlers().iterator();
+	while(eventIter.hasNext()){
+		EventHandler eh = eventIter.next();
+		if(eh.getEventType().equals(typeEvent)) {
+			res = eh;
+			break;
+		}
+	}
+	return res;	
+}
 
 }
