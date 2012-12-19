@@ -589,7 +589,7 @@ public static  void popolaListaAttrSempliciAggregati(String nomeEntita, WizardIn
 }
 public static  void popolaListaAttrSempliciAggregatiSubFolderMod(Field field, WizardInfo info, String prefisso) {
 	Field nField = null; 
-	FieldContext fieldContext = null;
+	FieldContext fieldContext = null; 
 	ComplexType ct= (ComplexType)field.getType();
 		List<Field> ll= ct.getAllFields();
 		Iterator<Field> it = ll.iterator();
@@ -603,14 +603,14 @@ public static  void popolaListaAttrSempliciAggregatiSubFolderMod(Field field, Wi
 			   info.getListaAttrEntita().add(prefisso+PUNTO+f.getName());
 			   info.getMapListaAttrEntitaContext().put(prefisso+PUNTO+f.getName(), fieldContext);
 		   }
-		   else if(f.getType() instanceof ComplexType && isAggregatedSimple(field)) {
+		   else if(f.getType() instanceof ComplexType && isAggregatedSimple(f)) {
 			  prefissoNomeCampo = prefisso +PUNTO+f.getName(); 
 			  popolaListaAttrSempliciAggregatiSubFolderMod(f, info, prefissoNomeCampo );
 		   }
 		   else if(f.getType() instanceof TypedArray ) {
 				  prefissoNomeCampo = prefisso +PUNTO+f.getName(); 
-				  popolaListaAttrSempliciAggregatiSubFolderMod(f, info, prefissoNomeCampo );
-			   }
+				  popolaListaAttrSempliciAggregatiSubFolderMod(f, info, prefissoNomeCampo );//probabile sarà da togliere per gestire livelli >1
+			}
 		 }
 
 }
@@ -655,7 +655,6 @@ public  static boolean isDecodedField(Field attr) {
 	String source = null;
 	EList<AnnotationDetail> listaAnnotazDett = null;
 	String relationType = null;
-	
 				 listaAnnotazioni = attr.getAnnotations();
 				 if(listaAnnotazioni != null) {
 					 for(Annotation annotazione :listaAnnotazioni) {
@@ -746,41 +745,6 @@ public  static Field getCodiceField(ComplexType tipo) {
 	   }
 			return res;
    	}
-
-public static FormPanel buildFpUIdarimettere2911(ComplexType entity, List <FieldContext> listaFiltriSel, WizardInfo info, ApplicationData mainAppData, String prefisso){
-	FormPanel fp = null; 
-	String prefissoNomeCampo = null;
-	
-	fp = guigenFactory.createFormPanel();
-	List<Field> foglie = getLeavesNode(entity);
-	
-	WidgetsPanel level0WP = buildWpUI(foglie, listaFiltriSel,info,  mainAppData, prefisso);
-	if(prefisso.equals("")) {
-		level0WP.setName(WP+RICERCA+upperFirstLetter(entity.getName()));
-	}
-	else {
-		level0WP.setName(WP+RICERCA+upperFirstLetter(prefisso.replace(".", "")));
-	}
-	if(!level0WP.getWidgets().isEmpty()){
-		
-		 fp.getSubpanels().add(level0WP);
-	}
-	List<Field> subsectionFields = getSubsectionFields(entity);
-	Iterator<Field> itSubsections = subsectionFields.iterator();
-	while (itSubsections.hasNext()) {
-		Field field = itSubsections.next();
-		prefissoNomeCampo = prefisso +field.getName()+PUNTO;
-		FormPanel currSubsectionFP = buildFpUI((ComplexType)field.getType(), listaFiltriSel, info,mainAppData, prefissoNomeCampo);
-		currSubsectionFP.setName(FP+RICERCA+upperFirstLetter(prefissoNomeCampo.replace(".", "")));
-		currSubsectionFP.setLabel(splitCamelCase(prefissoNomeCampo.replace(".", "")));
-		if(!currSubsectionFP.getSubpanels().isEmpty()) {
-			VerticalFlowPanelLayout vfpUp = guigenFactory.createVerticalFlowPanelLayout();
-			currSubsectionFP.setLayout(vfpUp);
-			fp.getSubpanels().add(currSubsectionFP);
-		}
-	}
-	return fp;
-}
 
 public static FormPanel buildFpUI(ComplexType entity, List <FieldContext> listaFiltriSel, WizardInfo info, ApplicationData mainAppData, String prefisso) {
 	FormPanel fp = null; 
@@ -937,7 +901,6 @@ public static Widget buildWidgetUIM(Field f, List<FieldContext> listFiltriSelez,
 		combokBox.setKeySelector(codice.getName());
 		Field desc = getDescrizioneField((ComplexType)f.getType());
 		combokBox.setValueSelector(desc.getName());
-		
 		combokBox.setLabel(splitCamelCase(campoFiltroNoPunto));
 		combokBox.setEnableEnrichment(true);
 		
@@ -1209,7 +1172,7 @@ public static FormPanel buildUI(ComplexType entity, ApplicationData mainAppData,
 		prefissoNomeCampo = prefisso +field.getName()+PUNTO;
 		FormPanel currSubsectionFP = buildUI((ComplexType)field.getType(), mainAppData, prefissoNomeCampo);
 		currSubsectionFP.setName(FP+upperFirstLetter(prefissoNomeCampo.replace(".", "")));
-		currSubsectionFP.setLabel(splitCamelCase(prefissoNomeCampo.replace(".", "")));//06-11
+	    currSubsectionFP.setLabel(splitCamelCase(prefissoNomeCampo.replace(".", "")));
 		VerticalFlowPanelLayout vfpUp = guigenFactory.createVerticalFlowPanelLayout();
 		currSubsectionFP.setLayout(vfpUp);
 		fp.getSubpanels().add(currSubsectionFP);
@@ -1256,7 +1219,7 @@ public static DataWidget buildWidgetdarimetter2911(Field f, ApplicationData main
 			w = guigenFactory.createTextField(); 
 			w.setName(TEXT_FIELD+upperFirstLetter(campoFiltroNoPunto));
 			w.setDataType(fieldType);
-			w.setLabel(splitCamelCase(campoFiltroNoPunto));
+		    w.setLabel(splitCamelCase(campoFiltroNoPunto));
 			w.setEnableEnrichment(true);
 			w.setDatabinding(appDataBinding);
 			break;
@@ -1266,7 +1229,7 @@ public static DataWidget buildWidgetdarimetter2911(Field f, ApplicationData main
 			w = checkBox;
 			checkBox.setName(CHECK_BOX+upperFirstLetter(campoFiltroNoPunto));
 			checkBox.setDataType(fieldType);
-			checkBox.setLabel(splitCamelCase(campoFiltroNoPunto));
+		    checkBox.setLabel(splitCamelCase(campoFiltroNoPunto));
 			checkBox.setEnableEnrichment(true);
 			checkBox.setDatabinding(appDataBinding);
 			break;
@@ -1322,7 +1285,7 @@ public static DataWidget buildWidget(Field f, ApplicationData mainAppData, Strin
 				w = checkBox;
 				checkBox.setName(CHECK_BOX+upperFirstLetter(campoFiltroNoPunto));
 				checkBox.setDataType(fieldType);
-				checkBox.setLabel(splitCamelCase(campoFiltroNoPunto));
+			    checkBox.setLabel(splitCamelCase(campoFiltroNoPunto));
 				checkBox.setEnableEnrichment(true);
 				checkBox.setDatabinding(appDataBinding);
 				break;
@@ -1497,7 +1460,6 @@ public static List<Field> getLeavesNode(ComplexType tipo) {
 		EList<Field> children = tipo.getAllFields();
 		Iterator<Field> iter = children.iterator();
 		Field attr = null;
-		 
 		 if(iter != null) {
 		    while(iter.hasNext()) {
 			     attr = (Field)iter.next();
@@ -1511,7 +1473,7 @@ public static List<Field> getLeavesNode(ComplexType tipo) {
 		    }
 		 }
 	}
-		 return listaFoglie;	
+	return listaFoglie;	
 	}
 
 public static FormPanel creaFPDett(String nomeForm, UDLRCSpecConstants udlrSpecConstants) { 
@@ -2148,27 +2110,35 @@ static private List<Integer> findIndex(String word) {
 }
 
 public static  String splitCamelCase(String wordCamelCase)  {
+	return splitCamelCase(wordCamelCase, " ");
+}
+
+public static  String splitCamelCase(String wordCamelCase, String separatore)  {
 	StringBuffer res = new StringBuffer();
+	String ww = upperFirstLetter(wordCamelCase);
 	int size = 0;
-	if(wordCamelCase != null && !wordCamelCase.equals("") ) {
-		List<Integer> listaIndex = findIndex(wordCamelCase);
-		size = listaIndex.size();
-		if(size == 0 ) {
-			return res.append(wordCamelCase.substring(0,1).toUpperCase()+wordCamelCase.substring(1,wordCamelCase.length())+ " ").toString();
-		}
-		if(size == 1 && listaIndex.get(0)== 0) {
-			return res.append(wordCamelCase.substring(0,1).toUpperCase()+wordCamelCase.substring(1,wordCamelCase.length())+ " ").toString();
-		}
-		int i = 0;
-		res.append(wordCamelCase.substring(0,1).toUpperCase()+wordCamelCase.substring(1,listaIndex.get(i))+ " ");
-		while (i<size-1) {
-			res.append(wordCamelCase.substring(listaIndex.get(i),listaIndex.get(i+1))+ " ");
-			i++;
-		}
-		res.append(wordCamelCase.substring(listaIndex.get(i),wordCamelCase.length()));
-		}
-	
-	return res.toString();
+	if(wordCamelCase == null) {
+		return res.toString();
+	}
+	if(wordCamelCase.length() == 0) {
+		return res.toString();
+	}
+	List<Integer> listaIndex = findIndex(ww);
+	size = listaIndex.size();
+	if(size == 0 ) {
+		return res.append(upperFirstLetter(ww)).toString();
+	}
+	if(size == 1 && listaIndex.get(0)== 0) {
+		return res.append(upperFirstLetter(ww)).toString();
+	}
+	int i = 0;
+	while (i<size-1) {
+		res.append(ww.substring(listaIndex.get(i), listaIndex.get(i+1))+ separatore);
+		i++;
+	}
+	return res.append(wordCamelCase.substring(listaIndex.get(i), wordCamelCase.length())).toString();
+
+	//return res.toString();
 }
 
 public static  String upperFirstLetter(String word)  {
