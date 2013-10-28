@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="it.csi.mddtools.guigen.presentation.GuigenModelWizardID"
+            name="%_UI_GuigenModelWizard_label"
+            class="it.csi.mddtools.guigen.presentation.GuigenModelWizard"
+            category="guigen.editor.newwizards"
+            icon="icons/full/obj16/GuigenModelFile.gif">
+         <description>%_UI_GuigenModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+      <wizard
+            id="it.csi.mddtools.guigen.presentation.GUIGENGenerateModelWizard.GuigenModelWizardID"
+            name="%_UI_GUIGENGenerateModelWizard_label"
+            class="it.csi.mddtools.guigen.presentation.GUIGENGenerateModelWizard.GuigenModelWizard"
+            category="guigen.editor.newwizards"
+            icon="icons/full/obj16/GuigenModelFile.gif">
+         <description>%_UI_GUIGENGenerateModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+      <wizard
+            category="guigen.editor.newwizards"
+            class="it.csi.mddtools.guigen.presentation.CommonFilesNewWizard"
+            icon="icons/full/obj16/GuigenModelFile.gif"
+            id="it.csi.mddtools.guigen.presentation.CommonFilesNewWizard"
+            name="Librerie standard per modelli GUIGEN">
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+         <description>
+            Crea i files di "libreria" utilizzati dai modelli GUIGEN:
+- commonTNS.guigen: contiene la definizione del Type Namespace "common", contenente i tipi base
+- commonAppdata.guigen: contiene la definizione degli Application Data comuni (es "currentUser") nell'AppDataGroup "common".
+
+Questi file devono essere importati come risorsa nei modelli:
+- root
+- appmodule
+         </description>
+      </wizard>
+      <wizard
+            category="guigen.editor.refactorwizards"
+            class="it.csi.mddtools.guigen.presentation.GUIModelNormalizerWizard.GUIModelNormalizerWizard"
+            icon="icons/full/obj16/GuigenModelFile.gif"
+            id="it.csi.mddtools.guigen.presentation.GUIModelNormalizerWizard.GUIModelNormalizerWizard"
+            name="Normalizzatore di modello GUIModel (all-in-one -&gt; composite model)">
+      </wizard>
+      <category
+            id="guigen.editor.newwizards"
+            name="Guigen wizards">
+      </category>
+      <category
+            id="guigen.editor.refactorwizards"
+            name="Guigen refactoring wizards">
+      </category>
+      <category
+            id="guigen.editor.uipatternwizards"
+            name="Guigen standard UI pattern wizards">
+      </category>
+      <wizard
+            category="guigen.editor.uipatternwizards"
+            class="it.csi.mddtools.guigen.editor.wizards.crud.NewEntityCRUDWizard"
+            icon="icons/full/obj16/GuigenModelFile.gif"
+            id="it.csi.mddtools.guigen.editor.wizards.crud.NewEntityCRUDWizard"
+            name="New Entity CRUD Structure">
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <editor
+            class="it.csi.mddtools.guigen.presentation.GuigenEditor"
+            contributorClass="it.csi.mddtools.guigen.presentation.GuigenActionBarContributor"
+            extensions="guigen"
+            icon="icons/full/obj16/GuigenModelFile.gif"
+            id="it.csi.mddtools.guigen.presentation.GuigenEditorID"
+            name="%_UI_GuigenEditor_label">
+      </editor>
+   </extension>
+
+</plugin>

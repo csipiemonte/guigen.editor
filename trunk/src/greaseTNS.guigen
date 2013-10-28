@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<guigen:TypeNamespace xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:guigen="http://www.csi.it/mddtools" name="greasemapfacade">
+  <types xsi:type="guigen:ComplexType" name="BaseMapResponse">
+    <fields name="customErrorType">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="errorLevel">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.1"/>
+    </fields>
+    <fields name="errorMsg">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="errorType">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+  </types>
+  <types xsi:type="guigen:ComplexType" name="MapEnvelopeResponse" extends="//@types.0">
+    <fields name="dati" type="//@types.3"/>
+  </types>
+  <types xsi:type="guigen:ComplexType" name="MapServiceResponse" extends="//@types.0">
+    <fields name="dati" type="//@types.6"/>
+  </types>
+  <types xsi:type="guigen:ComplexType" name="EnvelopeWeb">
+    <typeAnnotation language="java" fqn="it.csi.jeegia.jeegfw.dto.jeegweb.EnvelopeWeb"/>
+  </types>
+  <types xsi:type="guigen:ComplexType" name="MappaWeb">
+    <fields name="dimx" dataTypeModifier="">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.1"/>
+    </fields>
+    <fields name="dimy">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.1"/>
+    </fields>
+    <fields name="elencoServiziId">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="envelope" type="//@types.3"/>
+    <fields name="geometryTypeClick">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="idCurServizio">
+      <type xsi:type="guigen:TypedArray" href="commonTNS.guigen#//@types.22"/>
+    </fields>
+    <fields name="IdLayerAttivo">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="IdMap">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="IdServizioAttivo">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="livelloIndicatoreSlider">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.1"/>
+    </fields>
+    <fields name="livelloZoom">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.5"/>
+    </fields>
+    <fields name="mainOffsetLeft">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.1"/>
+    </fields>
+    <fields name="mainOffsetTop">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.1"/>
+    </fields>
+    <fields name="olMapConfig" type="//@types.5"/>
+    <fields name="percentualeZoom">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.1"/>
+    </fields>
+    <fields name="scala">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.5"/>
+    </fields>
+    <fields name="servizioMappa" type="//@types.7"/>
+    <fields name="strIdCurServizio">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="xclick">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="yclick">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.8"/>
+    </fields>
+    <fields name="useCurrentEnvelope">
+      <type xsi:type="guigen:SimpleType" href="commonTNS.guigen#//@types.2"/>
+    </fields>
+  </types>
+  <types xsi:type="guigen:ComplexType" name="OpenLayerMapConfig">
+    <typeAnnotation language="java" fqn="it.csi.jeegia.jeegfw.dto.jeegweb.mappa.OpenLayerMapConfig"/>
+  </types>
+  <types xsi:type="guigen:ComplexType" name="ServizioWeb">
+    <typeAnnotation language="java" fqn="it.csi.jeegia.jeegfw.dto.jeegweb.servizi.ServizioWeb"/>
+  </types>
+  <types xsi:type="guigen:TypedArray" name="ServizioWeb[]" componentType="//@types.6"/>
+  <types xsi:type="guigen:ComplexType" name="BaseResultDatarow">
+    <typeAnnotation language="java" fqn="it.csi.jeegia.jeegfw.dto.jeegweb.query.BaseResultDatarow"/>
+  </types>
+  <types xsi:type="guigen:TypedArray" name="BaseResultSetDataRow []" componentType="//@types.8"/>
+</guigen:TypeNamespace>
