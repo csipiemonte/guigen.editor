@@ -181,6 +181,7 @@ public class GuigenActionBarContributor
 	 */
 	@Override
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
+		super.contributeToToolBar(toolBarManager);
 		toolBarManager.add(new Separator("guigen-settings"));
 		toolBarManager.add(new Separator("guigen-additions"));
 	}
